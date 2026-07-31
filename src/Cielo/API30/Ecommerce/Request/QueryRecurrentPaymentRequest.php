@@ -8,23 +8,16 @@ use Cielo\API30\Merchant;
 use Psr\Log\LoggerInterface;
 
 /**
- * Class QueryRecurrentPaymentRequest
- *
- * @package Cielo\API30\Ecommerce\Request
+ * Class QueryRecurrentPaymentRequest.
  */
 class QueryRecurrentPaymentRequest extends AbstractRequest
 {
-
     private $environment;
 
-	/**
-	 * QueryRecurrentPaymentRequest constructor.
-	 *
-	 * @param Merchant $merchant
-	 * @param Environment $environment
-	 * @param LoggerInterface|null $logger
-	 */
-    public function __construct(Merchant $merchant, Environment $environment, LoggerInterface $logger = null)
+    /**
+     * QueryRecurrentPaymentRequest constructor.
+     */
+    public function __construct(Merchant $merchant, Environment $environment, ?LoggerInterface $logger = null)
     {
         parent::__construct($merchant, $logger);
 
@@ -32,9 +25,8 @@ class QueryRecurrentPaymentRequest extends AbstractRequest
     }
 
     /**
-     * @param $recurrentPaymentId
-     *
      * @return RecurrentPayment
+     *
      * @throws \Cielo\API30\Ecommerce\Request\CieloRequestException
      * @throws \RuntimeException
      */
@@ -46,8 +38,6 @@ class QueryRecurrentPaymentRequest extends AbstractRequest
     }
 
     /**
-     * @param $json
-     *
      * @return RecurrentPayment
      */
     protected function unserialize($json)

@@ -60,7 +60,10 @@
 ## Comandos relevantes
 
 - Validacao completa local: `composer test` (PHPStan + PHPUnit, exclui grupo `payment`).
-- Analise estatica: `composer phpstan`
+- PHPStan: `composer phpstan`
+- Checar formato: `composer format:check`
+- Corrigir formato: `composer format:fix`
+- Lint padrao do projeto: `composer lint`
 - PHPUnit (todos os testes, exceto grupo `payment`): `composer phpunit`
 - Testes unitarios: `composer test:unit`
 - Testes E2E: `composer test:e2e` (requer credenciais e ambiente configurados)

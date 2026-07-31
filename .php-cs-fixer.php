@@ -10,9 +10,6 @@ $finder = PhpCsFixer\Finder::create()
     ->exclude([
         'cache',
     ])
-    ->notPath([
-        'env.php',
-    ])
     ->ignoreDotFiles(true)
     ->ignoreVCS(true);
 

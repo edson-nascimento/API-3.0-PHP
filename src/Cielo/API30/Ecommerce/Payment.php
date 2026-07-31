@@ -3,28 +3,25 @@
 namespace Cielo\API30\Ecommerce;
 
 /**
- * Class Payment
- *
- * @package Cielo\API30\Ecommerce
+ * Class Payment.
  */
 class Payment implements \JsonSerializable
 {
+    public const PAYMENTTYPE_CREDITCARD = 'CreditCard';
 
-    const PAYMENTTYPE_CREDITCARD = 'CreditCard';
+    public const PAYMENTTYPE_DEBITCARD = 'DebitCard';
 
-    const PAYMENTTYPE_DEBITCARD = 'DebitCard';
+    public const PAYMENTTYPE_ELECTRONIC_TRANSFER = 'ElectronicTransfer';
 
-    const PAYMENTTYPE_ELECTRONIC_TRANSFER = 'ElectronicTransfer';
+    public const PAYMENTTYPE_BOLETO = 'Boleto';
 
-    const PAYMENTTYPE_BOLETO = 'Boleto';
+    public const PAYMENTTYPE_PIX = 'Pix';
 
-    const PAYMENTTYPE_PIX = 'Pix';
-    
-    const PROVIDER_BRADESCO = 'Bradesco';
+    public const PROVIDER_BRADESCO = 'Bradesco';
 
-    const PROVIDER_BANCO_DO_BRASIL = 'BancoDoBrasil';
+    public const PROVIDER_BANCO_DO_BRASIL = 'BancoDoBrasil';
 
-    const PROVIDER_SIMULADO = 'Simulado';
+    public const PROVIDER_SIMULADO = 'Simulado';
 
     private $serviceTaxAmount;
 
@@ -52,7 +49,7 @@ class Payment implements \JsonSerializable
 
     private $authorizationCode;
 
-    private $softDescriptor = "";
+    private $softDescriptor = '';
 
     private $returnUrl;
 
@@ -109,11 +106,11 @@ class Payment implements \JsonSerializable
     private $identification;
 
     private $instructions;
-   
+
     private $acquirerTransactionId;
-    
+
     private $qrcodeBase64Image;
-    
+
     private $qrCodeString;
 
     /**
@@ -129,8 +126,6 @@ class Payment implements \JsonSerializable
     }
 
     /**
-     * @param $json
-     *
      * @return Payment
      */
     public static function fromJson($json)
@@ -141,18 +136,14 @@ class Payment implements \JsonSerializable
         return $payment;
     }
 
-    /**
-     * @param \stdClass $data
-     */
     public function populate(\stdClass $data)
     {
-
         $this->serviceTaxAmount = isset($data->ServiceTaxAmount) ? $data->ServiceTaxAmount : null;
-        $this->installments     = isset($data->Installments) ? $data->Installments : null;
-        $this->interest         = isset($data->Interest) ? $data->Interest : null;
-        $this->capture          = isset($data->Capture) ? !!$data->Capture : false;
-        $this->authenticate     = isset($data->Authenticate) ? !!$data->Authenticate : false;
-        $this->recurrent        = isset($data->Recurrent) ? !!$data->Recurrent : false;
+        $this->installments = isset($data->Installments) ? $data->Installments : null;
+        $this->interest = isset($data->Interest) ? $data->Interest : null;
+        $this->capture = isset($data->Capture) ? (bool) $data->Capture : false;
+        $this->authenticate = isset($data->Authenticate) ? (bool) $data->Authenticate : false;
+        $this->recurrent = isset($data->Recurrent) ? (bool) $data->Recurrent : false;
 
         if (isset($data->RecurrentPayment)) {
             $this->recurrentPayment = new RecurrentPayment(false);
@@ -170,42 +161,42 @@ class Payment implements \JsonSerializable
         }
 
         $this->expirationDate = isset($data->ExpirationDate) ? $data->ExpirationDate : null;
-        $this->url            = isset($data->Url) ? $data->Url : null;
-        $this->boletoNumber   = isset($data->BoletoNumber) ? $data->BoletoNumber : null;
-        $this->barCodeNumber  = isset($data->BarCodeNumber) ? $data->BarCodeNumber : null;
-        $this->digitableLine  = isset($data->DigitableLine) ? $data->DigitableLine : null;
-        $this->address        = isset($data->Address) ? $data->Address : null;
+        $this->url = isset($data->Url) ? $data->Url : null;
+        $this->boletoNumber = isset($data->BoletoNumber) ? $data->BoletoNumber : null;
+        $this->barCodeNumber = isset($data->BarCodeNumber) ? $data->BarCodeNumber : null;
+        $this->digitableLine = isset($data->DigitableLine) ? $data->DigitableLine : null;
+        $this->address = isset($data->Address) ? $data->Address : null;
 
         $this->authenticationUrl = isset($data->AuthenticationUrl) ? $data->AuthenticationUrl : null;
-        $this->tid               = isset($data->Tid) ? $data->Tid : null;
-        $this->proofOfSale       = isset($data->ProofOfSale) ? $data->ProofOfSale : null;
+        $this->tid = isset($data->Tid) ? $data->Tid : null;
+        $this->proofOfSale = isset($data->ProofOfSale) ? $data->ProofOfSale : null;
         $this->authorizationCode = isset($data->AuthorizationCode) ? $data->AuthorizationCode : null;
-        $this->softDescriptor    = isset($data->SoftDescriptor) ? $data->SoftDescriptor : null;
-        $this->provider          = isset($data->Provider) ? $data->Provider : null;
-        $this->paymentId         = isset($data->PaymentId) ? $data->PaymentId : null;
-        $this->type              = isset($data->Type) ? $data->Type : null;
-        $this->amount            = isset($data->Amount) ? $data->Amount : null;
-        $this->receivedDate      = isset($data->ReceivedDate) ? $data->ReceivedDate : null;
-        $this->capturedAmount    = isset($data->CapturedAmount) ? $data->CapturedAmount : null;
-        $this->capturedDate      = isset($data->CapturedDate) ? $data->CapturedDate : null;
-        $this->voidedAmount      = isset($data->VoidedAmount) ? $data->VoidedAmount : null;
-        $this->voidedDate        = isset($data->VoidedDate) ? $data->VoidedDate : null;
-        $this->currency          = isset($data->Currency) ? $data->Currency : null;
-        $this->country           = isset($data->Country) ? $data->Country : null;
-        $this->returnCode        = isset($data->ReturnCode) ? $data->ReturnCode : null;
-        $this->returnMessage     = isset($data->ReturnMessage) ? $data->ReturnMessage : null;
-        $this->status            = isset($data->Status) ? $data->Status : null;
+        $this->softDescriptor = isset($data->SoftDescriptor) ? $data->SoftDescriptor : null;
+        $this->provider = isset($data->Provider) ? $data->Provider : null;
+        $this->paymentId = isset($data->PaymentId) ? $data->PaymentId : null;
+        $this->type = isset($data->Type) ? $data->Type : null;
+        $this->amount = isset($data->Amount) ? $data->Amount : null;
+        $this->receivedDate = isset($data->ReceivedDate) ? $data->ReceivedDate : null;
+        $this->capturedAmount = isset($data->CapturedAmount) ? $data->CapturedAmount : null;
+        $this->capturedDate = isset($data->CapturedDate) ? $data->CapturedDate : null;
+        $this->voidedAmount = isset($data->VoidedAmount) ? $data->VoidedAmount : null;
+        $this->voidedDate = isset($data->VoidedDate) ? $data->VoidedDate : null;
+        $this->currency = isset($data->Currency) ? $data->Currency : null;
+        $this->country = isset($data->Country) ? $data->Country : null;
+        $this->returnCode = isset($data->ReturnCode) ? $data->ReturnCode : null;
+        $this->returnMessage = isset($data->ReturnMessage) ? $data->ReturnMessage : null;
+        $this->status = isset($data->Status) ? $data->Status : null;
 
         $this->links = isset($data->Links) ? $data->Links : [];
 
-        $this->assignor       = isset($data->Assignor) ? $data->Assignor : null;
-        $this->demonstrative  = isset($data->Demonstrative) ? $data->Demonstrative : null;
+        $this->assignor = isset($data->Assignor) ? $data->Assignor : null;
+        $this->demonstrative = isset($data->Demonstrative) ? $data->Demonstrative : null;
         $this->identification = isset($data->Identification) ? $data->Identification : null;
-        $this->instructions   = isset($data->Instructions) ? $data->Instructions : null;
+        $this->instructions = isset($data->Instructions) ? $data->Instructions : null;
 
-        $this->acquirerTransactionId   = isset($data->AcquirerTransactionId) ? $data->AcquirerTransactionId : null;
-        $this->qrcodeBase64Image       = isset($data->QrcodeBase64Image) ? $data->QrcodeBase64Image : null;
-        $this->qrCodeString            = isset($data->QrCodeString) ? $data->QrCodeString : null;
+        $this->acquirerTransactionId = isset($data->AcquirerTransactionId) ? $data->AcquirerTransactionId : null;
+        $this->qrcodeBase64Image = isset($data->QrcodeBase64Image) ? $data->QrcodeBase64Image : null;
+        $this->qrCodeString = isset($data->QrCodeString) ? $data->QrCodeString : null;
     }
 
     public function jsonSerialize(): mixed
@@ -214,9 +205,6 @@ class Payment implements \JsonSerializable
     }
 
     /**
-     * @param $securityCode
-     * @param $brand
-     *
      * @return CreditCard
      */
     public function creditCard($securityCode, $brand)
@@ -230,9 +218,6 @@ class Payment implements \JsonSerializable
     }
 
     /**
-     * @param $securityCode
-     * @param $brand
-     *
      * @return CreditCard
      */
     private function newCard($securityCode, $brand)
@@ -245,9 +230,6 @@ class Payment implements \JsonSerializable
     }
 
     /**
-     * @param $securityCode
-     * @param $brand
-     *
      * @return CreditCard
      */
     public function debitCard($securityCode, $brand)
@@ -273,9 +255,8 @@ class Payment implements \JsonSerializable
 
         return $recurrentPayment;
     }
-    
+
     /**
-     * 
      * @return $this
      */
     public function pix()
@@ -286,17 +267,12 @@ class Payment implements \JsonSerializable
         return $this;
     }
 
-    /**
-     * @return mixed
-     */
     public function getServiceTaxAmount()
     {
         return $this->serviceTaxAmount;
     }
 
     /**
-     * @param $serviceTaxAmount
-     *
      * @return $this
      */
     public function setServiceTaxAmount($serviceTaxAmount)
@@ -306,17 +282,12 @@ class Payment implements \JsonSerializable
         return $this;
     }
 
-    /**
-     * @return mixed
-     */
     public function getInstallments()
     {
         return $this->installments;
     }
 
     /**
-     * @param $installments
-     *
      * @return $this
      */
     public function setInstallments($installments)
@@ -326,17 +297,12 @@ class Payment implements \JsonSerializable
         return $this;
     }
 
-    /**
-     * @return mixed
-     */
     public function getInterest()
     {
         return $this->interest;
     }
 
     /**
-     * @param $interest
-     *
      * @return $this
      */
     public function setInterest($interest)
@@ -355,8 +321,6 @@ class Payment implements \JsonSerializable
     }
 
     /**
-     * @param $capture
-     *
      * @return $this
      */
     public function setCapture($capture)
@@ -375,8 +339,6 @@ class Payment implements \JsonSerializable
     }
 
     /**
-     * @param $authenticate
-     *
      * @return $this
      */
     public function setAuthenticate($authenticate)
@@ -386,17 +348,12 @@ class Payment implements \JsonSerializable
         return $this;
     }
 
-    /**
-     * @return mixed
-     */
     public function getRecurrent()
     {
         return $this->recurrent;
     }
 
     /**
-     * @param $recurrent
-     *
      * @return $this
      */
     public function setRecurrent($recurrent)
@@ -406,17 +363,12 @@ class Payment implements \JsonSerializable
         return $this;
     }
 
-    /**
-     * @return mixed
-     */
     public function getRecurrentPayment()
     {
         return $this->recurrentPayment;
     }
 
     /**
-     * @param $recurrentPayment
-     *
      * @return $this
      */
     public function setRecurrentPayment($recurrentPayment)
@@ -426,17 +378,12 @@ class Payment implements \JsonSerializable
         return $this;
     }
 
-    /**
-     * @return mixed
-     */
     public function getCreditCard()
     {
         return $this->creditCard;
     }
 
     /**
-     * @param CreditCard $creditCard
-     *
      * @return $this
      */
     public function setCreditCard(CreditCard $creditCard)
@@ -446,17 +393,12 @@ class Payment implements \JsonSerializable
         return $this;
     }
 
-    /**
-     * @return mixed
-     */
     public function getDebitCard()
     {
         return $this->debitCard;
     }
 
     /**
-     * @param mixed $debitCard
-     *
      * @return $this
      */
     public function setDebitCard($debitCard)
@@ -466,17 +408,12 @@ class Payment implements \JsonSerializable
         return $this;
     }
 
-    /**
-     * @return mixed
-     */
     public function getAuthenticationUrl()
     {
         return $this->authenticationUrl;
     }
 
     /**
-     * @param $authenticationUrl
-     *
      * @return $this
      */
     public function setAuthenticationUrl($authenticationUrl)
@@ -486,17 +423,12 @@ class Payment implements \JsonSerializable
         return $this;
     }
 
-    /**
-     * @return mixed
-     */
     public function getTid()
     {
         return $this->tid;
     }
 
     /**
-     * @param $tid
-     *
      * @return $this
      */
     public function setTid($tid)
@@ -506,17 +438,12 @@ class Payment implements \JsonSerializable
         return $this;
     }
 
-    /**
-     * @return mixed
-     */
     public function getProofOfSale()
     {
         return $this->proofOfSale;
     }
 
     /**
-     * @param $proofOfSale
-     *
      * @return $this
      */
     public function setProofOfSale($proofOfSale)
@@ -526,17 +453,12 @@ class Payment implements \JsonSerializable
         return $this;
     }
 
-    /**
-     * @return mixed
-     */
     public function getAuthorizationCode()
     {
         return $this->authorizationCode;
     }
 
     /**
-     * @param $authorizationCode
-     *
      * @return $this
      */
     public function setAuthorizationCode($authorizationCode)
@@ -555,8 +477,6 @@ class Payment implements \JsonSerializable
     }
 
     /**
-     * @param $softDescriptor
-     *
      * @return $this
      */
     public function setSoftDescriptor($softDescriptor)
@@ -566,17 +486,12 @@ class Payment implements \JsonSerializable
         return $this;
     }
 
-    /**
-     * @return mixed
-     */
     public function getReturnUrl()
     {
         return $this->returnUrl;
     }
 
     /**
-     * @param $returnUrl
-     *
      * @return $this
      */
     public function setReturnUrl($returnUrl)
@@ -586,17 +501,12 @@ class Payment implements \JsonSerializable
         return $this;
     }
 
-    /**
-     * @return mixed
-     */
     public function getProvider()
     {
         return $this->provider;
     }
 
     /**
-     * @param $provider
-     *
      * @return $this
      */
     public function setProvider($provider)
@@ -606,17 +516,12 @@ class Payment implements \JsonSerializable
         return $this;
     }
 
-    /**
-     * @return mixed
-     */
     public function getPaymentId()
     {
         return $this->paymentId;
     }
 
     /**
-     * @param $paymentId
-     *
      * @return $this
      */
     public function setPaymentId($paymentId)
@@ -626,17 +531,12 @@ class Payment implements \JsonSerializable
         return $this;
     }
 
-    /**
-     * @return mixed
-     */
     public function getType()
     {
         return $this->type;
     }
 
     /**
-     * @param $type
-     *
      * @return $this
      */
     public function setType($type)
@@ -646,17 +546,12 @@ class Payment implements \JsonSerializable
         return $this;
     }
 
-    /**
-     * @return mixed
-     */
     public function getAmount()
     {
         return $this->amount;
     }
 
     /**
-     * @param $amount
-     *
      * @return $this
      */
     public function setAmount($amount)
@@ -666,17 +561,12 @@ class Payment implements \JsonSerializable
         return $this;
     }
 
-    /**
-     * @return mixed
-     */
     public function getReceivedDate()
     {
         return $this->receivedDate;
     }
 
     /**
-     * @param $receivedDate
-     *
      * @return $this
      */
     public function setReceivedDate($receivedDate)
@@ -686,17 +576,12 @@ class Payment implements \JsonSerializable
         return $this;
     }
 
-    /**
-     * @return mixed
-     */
     public function getCapturedAmount()
     {
         return $this->capturedAmount;
     }
 
     /**
-     * @param $capturedAmount
-     *
      * @return $this
      */
     public function setCapturedAmount($capturedAmount)
@@ -706,17 +591,12 @@ class Payment implements \JsonSerializable
         return $this;
     }
 
-    /**
-     * @return mixed
-     */
     public function getCapturedDate()
     {
         return $this->capturedDate;
     }
 
     /**
-     * @param $capturedDate
-     *
      * @return $this
      */
     public function setCapturedDate($capturedDate)
@@ -726,17 +606,12 @@ class Payment implements \JsonSerializable
         return $this;
     }
 
-    /**
-     * @return mixed
-     */
     public function getVoidedAmount()
     {
         return $this->voidedAmount;
     }
 
     /**
-     * @param $voidedAmount
-     *
      * @return $this
      */
     public function setVoidedAmount($voidedAmount)
@@ -746,17 +621,12 @@ class Payment implements \JsonSerializable
         return $this;
     }
 
-    /**
-     * @return mixed
-     */
     public function getVoidedDate()
     {
         return $this->voidedDate;
     }
 
     /**
-     * @param $voidedDate
-     *
      * @return $this
      */
     public function setVoidedDate($voidedDate)
@@ -766,17 +636,12 @@ class Payment implements \JsonSerializable
         return $this;
     }
 
-    /**
-     * @return mixed
-     */
     public function getCurrency()
     {
         return $this->currency;
     }
 
     /**
-     * @param $currency
-     *
      * @return $this
      */
     public function setCurrency($currency)
@@ -786,17 +651,12 @@ class Payment implements \JsonSerializable
         return $this;
     }
 
-    /**
-     * @return mixed
-     */
     public function getCountry()
     {
         return $this->country;
     }
 
     /**
-     * @param $country
-     *
      * @return $this
      */
     public function setCountry($country)
@@ -806,17 +666,12 @@ class Payment implements \JsonSerializable
         return $this;
     }
 
-    /**
-     * @return mixed
-     */
     public function getReturnCode()
     {
         return $this->returnCode;
     }
 
     /**
-     * @param $returnCode
-     *
      * @return $this
      */
     public function setReturnCode($returnCode)
@@ -826,17 +681,12 @@ class Payment implements \JsonSerializable
         return $this;
     }
 
-    /**
-     * @return mixed
-     */
     public function getReturnMessage()
     {
         return $this->returnMessage;
     }
 
     /**
-     * @param $returnMessage
-     *
      * @return $this
      */
     public function setReturnMessage($returnMessage)
@@ -846,17 +696,12 @@ class Payment implements \JsonSerializable
         return $this;
     }
 
-    /**
-     * @return mixed
-     */
     public function getStatus()
     {
         return $this->status;
     }
 
     /**
-     * @param $status
-     *
      * @return $this
      */
     public function setStatus($status)
@@ -866,17 +711,12 @@ class Payment implements \JsonSerializable
         return $this;
     }
 
-    /**
-     * @return mixed
-     */
     public function getLinks()
     {
         return $this->links;
     }
 
     /**
-     * @param $links
-     *
      * @return $this
      */
     public function setLinks($links)
@@ -886,17 +726,12 @@ class Payment implements \JsonSerializable
         return $this;
     }
 
-    /**
-     * @return mixed
-     */
     public function getExtraDataCollection()
     {
         return $this->extraDataCollection;
     }
 
     /**
-     * @param $extraDataCollection
-     *
      * @return $this
      */
     public function setExtraDataCollection($extraDataCollection)
@@ -906,17 +741,12 @@ class Payment implements \JsonSerializable
         return $this;
     }
 
-    /**
-     * @return mixed
-     */
     public function getExpirationDate()
     {
         return $this->expirationDate;
     }
 
     /**
-     * @param $expirationDate
-     *
      * @return $this
      */
     public function setExpirationDate($expirationDate)
@@ -926,17 +756,12 @@ class Payment implements \JsonSerializable
         return $this;
     }
 
-    /**
-     * @return mixed
-     */
     public function getUrl()
     {
         return $this->url;
     }
 
     /**
-     * @param $url
-     *
      * @return $this
      */
     public function setUrl($url)
@@ -946,17 +771,12 @@ class Payment implements \JsonSerializable
         return $this;
     }
 
-    /**
-     * @return mixed
-     */
     public function getNumber()
     {
         return $this->number;
     }
 
     /**
-     * @param $number
-     *
      * @return $this
      */
     public function setNumber($number)
@@ -966,17 +786,12 @@ class Payment implements \JsonSerializable
         return $this;
     }
 
-    /**
-     * @return mixed
-     */
     public function getBoletoNumber()
     {
         return $this->boletoNumber;
     }
 
     /**
-     * @param $boletoNumber
-     *
      * @return $this
      */
     public function setBoletoNumber($boletoNumber)
@@ -986,17 +801,12 @@ class Payment implements \JsonSerializable
         return $this;
     }
 
-    /**
-     * @return mixed
-     */
     public function getBarCodeNumber()
     {
         return $this->barCodeNumber;
     }
 
     /**
-     * @param $barCodeNumber
-     *
      * @return $this
      */
     public function setBarCodeNumber($barCodeNumber)
@@ -1006,17 +816,12 @@ class Payment implements \JsonSerializable
         return $this;
     }
 
-    /**
-     * @return mixed
-     */
     public function getDigitableLine()
     {
         return $this->digitableLine;
     }
 
     /**
-     * @param $digitableLine
-     *
      * @return $this
      */
     public function setDigitableLine($digitableLine)
@@ -1026,17 +831,12 @@ class Payment implements \JsonSerializable
         return $this;
     }
 
-    /**
-     * @return mixed
-     */
     public function getAddress()
     {
         return $this->address;
     }
 
     /**
-     * @param $address
-     *
      * @return $this
      */
     public function setAddress($address)
@@ -1046,17 +846,12 @@ class Payment implements \JsonSerializable
         return $this;
     }
 
-    /**
-     * @return mixed
-     */
     public function getAssignor()
     {
         return $this->assignor;
     }
 
     /**
-     * @param $assignor
-     *
      * @return $this
      */
     public function setAssignor($assignor)
@@ -1066,17 +861,12 @@ class Payment implements \JsonSerializable
         return $this;
     }
 
-    /**
-     * @return mixed
-     */
     public function getDemonstrative()
     {
         return $this->demonstrative;
     }
 
     /**
-     * @param $demonstrative
-     *
      * @return $this
      */
     public function setDemonstrative($demonstrative)
@@ -1086,17 +876,12 @@ class Payment implements \JsonSerializable
         return $this;
     }
 
-    /**
-     * @return mixed
-     */
     public function getIdentification()
     {
         return $this->identification;
     }
 
     /**
-     * @param $identification
-     *
      * @return $this
      */
     public function setIdentification($identification)
@@ -1106,17 +891,12 @@ class Payment implements \JsonSerializable
         return $this;
     }
 
-    /**
-     * @return mixed
-     */
     public function getInstructions()
     {
         return $this->instructions;
     }
 
     /**
-     * @param $instructions
-     *
      * @return $this
      */
     public function setInstructions($instructions)
@@ -1125,9 +905,9 @@ class Payment implements \JsonSerializable
 
         return $this;
     }
-    
+
     /**
-     * @return string|NULL
+     * @return string|null
      */
     public function getAcquirerTransactionId()
     {
@@ -1135,19 +915,17 @@ class Payment implements \JsonSerializable
     }
 
     /**
-     * @param $acquirerTransactionId
-     * 
      * @return $this
      */
     public function setAcquirerTransactionId($acquirerTransactionId)
     {
         $this->acquirerTransactionId = $acquirerTransactionId;
-        
+
         return $this;
     }
 
     /**
-     * @return string|NULL
+     * @return string|null
      */
     public function getQrcodeBase64Image()
     {
@@ -1155,20 +933,17 @@ class Payment implements \JsonSerializable
     }
 
     /**
-     * @param $qrcodeBase64Image
-     * 
      * @return $this
-     * 
      */
     public function setQrcodeBase64Image($qrcodeBase64Image)
     {
         $this->qrcodeBase64Image = $qrcodeBase64Image;
-        
+
         return $this;
     }
 
     /**
-     * @return string|NULL
+     * @return string|null
      */
     public function getQrCodeString()
     {
@@ -1176,15 +951,12 @@ class Payment implements \JsonSerializable
     }
 
     /**
-     * @param $qrCodeString
-     * 
      * @return $this
      */
     public function setQrCodeString($qrCodeString)
     {
         $this->qrCodeString = $qrCodeString;
-        
+
         return $this;
     }
-
 }

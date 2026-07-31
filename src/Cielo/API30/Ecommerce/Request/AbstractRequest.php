@@ -6,54 +6,37 @@ use Cielo\API30\Merchant;
 use Psr\Log\LoggerInterface;
 
 /**
- * Class AbstractSaleRequest
- *
- * @package Cielo\API30\Ecommerce\Request
+ * Class AbstractSaleRequest.
  */
 abstract class AbstractRequest
 {
-
     private $merchant;
     private $logger;
 
-	/**
-	 * AbstractSaleRequest constructor.
-	 *
-	 * @param Merchant $merchant
-	 * @param LoggerInterface|null $logger
-	 */
-    public function __construct(Merchant $merchant, LoggerInterface $logger = null)
+    /**
+     * AbstractSaleRequest constructor.
+     */
+    public function __construct(Merchant $merchant, ?LoggerInterface $logger = null)
     {
         $this->merchant = $merchant;
         $this->logger = $logger;
     }
 
-    /**
-     * @param $param
-     *
-     * @return mixed
-     */
-    public abstract function execute($param);
+    abstract public function execute($param);
 
     /**
-     * @param                        $method
-     * @param                        $url
-     * @param \JsonSerializable|null $content
-     *
-     * @return mixed
-     *
      * @throws \Cielo\API30\Ecommerce\Request\CieloRequestException
      * @throws \RuntimeException
      */
-    protected function sendRequest($method, $url, \JsonSerializable $content = null)
+    protected function sendRequest($method, $url, ?\JsonSerializable $content = null)
     {
         $headers = [
             'Accept: application/json',
-            //'Accept-Encoding: gzip',
+            // 'Accept-Encoding: gzip',
             'User-Agent: CieloEcommerce/3.0 PHP SDK',
             'MerchantId: ' . $this->merchant->getId(),
             'MerchantKey: ' . $this->merchant->getKey(),
-            'RequestId: ' . uniqid()
+            'RequestId: ' . uniqid(),
         ];
 
         $curl = curl_init($url);
@@ -84,20 +67,20 @@ abstract class AbstractRequest
 
         if ($this->logger !== null) {
             $this->logger->debug('Requisição', [
-                    sprintf('%s %s', $method, $url),
-                    $headers,
-                    json_decode(preg_replace('/("cardnumber"):"([^"]{6})[^"]+([^"]{4})"/i', '$1:"$2******$3"', json_encode($content)))
-                ]
+                sprintf('%s %s', $method, $url),
+                $headers,
+                json_decode(preg_replace('/("cardnumber"):"([^"]{6})[^"]+([^"]{4})"/i', '$1:"$2******$3"', json_encode($content))),
+            ]
             );
         }
 
-        $response   = curl_exec($curl);
+        $response = curl_exec($curl);
         $statusCode = curl_getinfo($curl, CURLINFO_HTTP_CODE);
 
         if ($this->logger !== null) {
             $this->logger->debug('Resposta', [
                 sprintf('Código de status: %s', $statusCode),
-                json_decode($response)
+                json_decode($response),
             ]);
         }
 
@@ -117,11 +100,6 @@ abstract class AbstractRequest
     }
 
     /**
-     * @param $statusCode
-     * @param $responseBody
-     *
-     * @return mixed
-     *
      * @throws CieloRequestException
      */
     protected function readResponse($statusCode, $responseBody)
@@ -135,16 +113,16 @@ abstract class AbstractRequest
                 break;
             case 400:
                 $exception = null;
-                $response  = json_decode($responseBody);
+                $response = json_decode($responseBody);
 
                 if (is_array($response) && count($response) > 0) {
                     foreach ($response as $error) {
                         $cieloError = new CieloError($error->Message, $error->Code);
-                        $exception  = new CieloRequestException('Request Error', $statusCode, $exception);
+                        $exception = new CieloRequestException('Request Error', $statusCode, $exception);
                         $exception->setCieloError($cieloError);
                     }
                 } else {
-                    $exception  = new CieloRequestException("Request Error $statusCode, response: $responseBody", $statusCode);
+                    $exception = new CieloRequestException("Request Error $statusCode, response: $responseBody", $statusCode);
                 }
 
                 throw $exception;
@@ -159,10 +137,5 @@ abstract class AbstractRequest
         return $unserialized;
     }
 
-    /**
-     * @param $json
-     *
-     * @return mixed
-     */
-    protected abstract function unserialize($json);
+    abstract protected function unserialize($json);
 }

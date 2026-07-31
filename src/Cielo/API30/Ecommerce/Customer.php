@@ -3,13 +3,10 @@
 namespace Cielo\API30\Ecommerce;
 
 /**
- * Class Customer
- *
- * @package Cielo\API30\Ecommerce
+ * Class Customer.
  */
 class Customer implements \JsonSerializable
 {
-
     private $name;
 
     private $email;
@@ -39,16 +36,13 @@ class Customer implements \JsonSerializable
         return get_object_vars($this);
     }
 
-    /**
-     * @param \stdClass $data
-     */
     public function populate(\stdClass $data)
     {
-        $this->name      = isset($data->Name) ? $data->Name : null;
-        $this->email     = isset($data->Email) ? $data->Email : null;
+        $this->name = isset($data->Name) ? $data->Name : null;
+        $this->email = isset($data->Email) ? $data->Email : null;
         $this->birthDate = isset($data->Birthdate) ? $data->Birthdate : null;
 
-        $this->identity     = isset($data->Identity) ? $data->Identity : null;
+        $this->identity = isset($data->Identity) ? $data->Identity : null;
         $this->identityType = isset($data->IdentityType) ? $data->IdentityType : null;
 
         if (isset($data->Address)) {
@@ -86,17 +80,12 @@ class Customer implements \JsonSerializable
         return $address;
     }
 
-    /**
-     * @return mixed
-     */
     public function getName()
     {
         return $this->name;
     }
 
     /**
-     * @param $name
-     *
      * @return $this
      */
     public function setName($name)
@@ -106,17 +95,12 @@ class Customer implements \JsonSerializable
         return $this;
     }
 
-    /**
-     * @return mixed
-     */
     public function getEmail()
     {
         return $this->email;
     }
 
     /**
-     * @param $email
-     *
      * @return $this
      */
     public function setEmail($email)
@@ -126,17 +110,12 @@ class Customer implements \JsonSerializable
         return $this;
     }
 
-    /**
-     * @return mixed
-     */
     public function getBirthDate()
     {
         return $this->birthDate;
     }
 
     /**
-     * @param $birthDate
-     *
      * @return $this
      */
     public function setBirthDate($birthDate)
@@ -146,17 +125,12 @@ class Customer implements \JsonSerializable
         return $this;
     }
 
-    /**
-     * @return mixed
-     */
     public function getIdentity()
     {
         return $this->identity;
     }
 
     /**
-     * @param $identity
-     *
      * @return $this
      */
     public function setIdentity($identity)
@@ -166,17 +140,12 @@ class Customer implements \JsonSerializable
         return $this;
     }
 
-    /**
-     * @return mixed
-     */
     public function getIdentityType()
     {
         return $this->identityType;
     }
 
     /**
-     * @param $identityType
-     *
      * @return $this
      */
     public function setIdentityType($identityType)
@@ -186,17 +155,12 @@ class Customer implements \JsonSerializable
         return $this;
     }
 
-    /**
-     * @return mixed
-     */
     public function getAddress()
     {
         return $this->address;
     }
 
     /**
-     * @param $address
-     *
      * @return $this
      */
     public function setAddress($address)
@@ -206,17 +170,12 @@ class Customer implements \JsonSerializable
         return $this;
     }
 
-    /**
-     * @return mixed
-     */
     public function getDeliveryAddress()
     {
         return $this->deliveryAddress;
     }
 
     /**
-     * @param $deliveryAddress
-     *
      * @return $this
      */
     public function setDeliveryAddress($deliveryAddress)

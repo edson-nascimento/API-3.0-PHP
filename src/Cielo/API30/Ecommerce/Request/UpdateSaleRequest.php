@@ -8,13 +8,10 @@ use Cielo\API30\Merchant;
 use Psr\Log\LoggerInterface;
 
 /**
- * Class UpdateSaleRequest
- *
- * @package Cielo\API30\Ecommerce\Request
+ * Class UpdateSaleRequest.
  */
 class UpdateSaleRequest extends AbstractRequest
 {
-
     private $environment;
 
     private $type;
@@ -23,32 +20,28 @@ class UpdateSaleRequest extends AbstractRequest
 
     private $amount;
 
-	/**
-	 * UpdateSaleRequest constructor.
-	 *
-	 * @param string $type
-	 * @param Merchant $merchant
-	 * @param Environment $environment
-	 * @param LoggerInterface|null $logger
-	 */
-    public function __construct($type, Merchant $merchant, Environment $environment, LoggerInterface $logger = null)
+    /**
+     * UpdateSaleRequest constructor.
+     *
+     * @param string $type
+     */
+    public function __construct($type, Merchant $merchant, Environment $environment, ?LoggerInterface $logger = null)
     {
         parent::__construct($merchant, $logger);
 
         $this->environment = $environment;
-        $this->type        = $type;
+        $this->type = $type;
     }
 
     /**
-     * @param $paymentId
-     *
      * @return Payment
+     *
      * @throws \Cielo\API30\Ecommerce\Request\CieloRequestException
      * @throws \RuntimeException
      */
     public function execute($paymentId)
     {
-        $url    = $this->environment->getApiUrl() . '1/sales/' . $paymentId . '/' . $this->type;
+        $url = $this->environment->getApiUrl() . '1/sales/' . $paymentId . '/' . $this->type;
         $params = [];
 
         if ($this->amount != null) {
@@ -65,8 +58,6 @@ class UpdateSaleRequest extends AbstractRequest
     }
 
     /**
-     * @param $json
-     *
      * @return Payment
      */
     protected function unserialize($json)
@@ -74,17 +65,12 @@ class UpdateSaleRequest extends AbstractRequest
         return Payment::fromJson($json);
     }
 
-    /**
-     * @return mixed
-     */
     public function getServiceTaxAmount()
     {
         return $this->serviceTaxAmount;
     }
 
     /**
-     * @param $serviceTaxAmount
-     *
      * @return $this
      */
     public function setServiceTaxAmount($serviceTaxAmount)
@@ -94,17 +80,12 @@ class UpdateSaleRequest extends AbstractRequest
         return $this;
     }
 
-    /**
-     * @return mixed
-     */
     public function getAmount()
     {
         return $this->amount;
     }
 
     /**
-     * @param $amount
-     *
      * @return $this
      */
     public function setAmount($amount)

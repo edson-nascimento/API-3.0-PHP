@@ -3,9 +3,7 @@
 namespace Cielo\API30;
 
 /**
- * Class Merchant
- *
- * @package Cielo\API30
+ * Class Merchant.
  */
 class Merchant
 {
@@ -14,18 +12,15 @@ class Merchant
 
     /**
      * Merchant constructor.
-     *
-     * @param $id
-     * @param $key
      */
     public function __construct($id, $key)
     {
-        $this->id  = $id;
+        $this->id = $id;
         $this->key = $key;
     }
 
     /**
-     * Gets the merchant identification number
+     * Gets the merchant identification number.
      *
      * @return string the merchant identification number on Cielo
      */
@@ -35,7 +30,7 @@ class Merchant
     }
 
     /**
-     * Gets the merchant identification key
+     * Gets the merchant identification key.
      *
      * @return string the merchant identification key on Cielo
      */
