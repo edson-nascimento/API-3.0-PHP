@@ -36,7 +36,13 @@
       "@phpunit"
     ],
     "test:unit": "phpunit tests/Unit --configuration phpunit.xml --testdox",
-    "test:e2e": "phpunit tests/E2E --configuration phpunit.xml --testdox"
+    "test:e2e": "phpunit tests/E2E --configuration phpunit.xml --testdox",
+    "format:check": "php-cs-fixer fix --dry-run --stop-on-violation",
+    "format:fix": "php-cs-fixer fix",
+    "lint": [
+      "@format:fix",
+      "@phpstan"
+    ]
   },
   "license": "MIT",
   "minimum-stability": "stable"
