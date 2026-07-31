@@ -3,13 +3,10 @@
 namespace Cielo\API30\Ecommerce\Request;
 
 /**
- * Class CieloRequestException
- *
- * @package Cielo\API30\Ecommerce\Request
+ * Class CieloRequestException.
  */
 class CieloRequestException extends \Exception
 {
-
     private $cieloError;
 
     /**
@@ -24,17 +21,12 @@ class CieloRequestException extends \Exception
         parent::__construct($message, $code, $previous);
     }
 
-    /**
-     * @return mixed
-     */
     public function getCieloError()
     {
         return $this->cieloError;
     }
 
     /**
-     * @param CieloError $cieloError
-     *
      * @return $this
      */
     public function setCieloError(CieloError $cieloError)

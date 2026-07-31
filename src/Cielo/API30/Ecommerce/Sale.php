@@ -3,13 +3,10 @@
 namespace Cielo\API30\Ecommerce;
 
 /**
- * Class Sale
- *
- * @package Cielo\API30\Ecommerce
+ * Class Sale.
  */
 class Sale implements \JsonSerializable
 {
-
     private $merchantOrderId;
 
     private $customer;
@@ -27,8 +24,6 @@ class Sale implements \JsonSerializable
     }
 
     /**
-     * @param $json
-     *
      * @return Sale
      */
     public static function fromJson($json)
@@ -41,9 +36,6 @@ class Sale implements \JsonSerializable
         return $sale;
     }
 
-    /**
-     * @param \stdClass $data
-     */
     public function populate(\stdClass $data)
     {
         $dataProps = get_object_vars($data);
@@ -69,8 +61,6 @@ class Sale implements \JsonSerializable
     }
 
     /**
-     * @param $name
-     *
      * @return Customer
      */
     public function customer($name)
@@ -83,7 +73,6 @@ class Sale implements \JsonSerializable
     }
 
     /**
-     * @param     $amount
      * @param int $installments
      *
      * @return Payment
@@ -97,17 +86,12 @@ class Sale implements \JsonSerializable
         return $payment;
     }
 
-    /**
-     * @return mixed
-     */
     public function getMerchantOrderId()
     {
         return $this->merchantOrderId;
     }
 
     /**
-     * @param $merchantOrderId
-     *
      * @return $this
      */
     public function setMerchantOrderId($merchantOrderId)
@@ -117,17 +101,12 @@ class Sale implements \JsonSerializable
         return $this;
     }
 
-    /**
-     * @return mixed
-     */
     public function getCustomer()
     {
         return $this->customer;
     }
 
     /**
-     * @param Customer $customer
-     *
      * @return $this
      */
     public function setCustomer(Customer $customer)
@@ -137,17 +116,11 @@ class Sale implements \JsonSerializable
         return $this;
     }
 
-    /**
-     * @return mixed
-     */
     public function getPayment()
     {
         return $this->payment;
     }
 
-    /*
-     *
-     */
     public function setPayment(Payment $payment)
     {
         $this->payment = $payment;

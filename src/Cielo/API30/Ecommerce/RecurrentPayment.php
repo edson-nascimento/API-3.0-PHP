@@ -3,22 +3,19 @@
 namespace Cielo\API30\Ecommerce;
 
 /**
- * Class RecurrentPayment
- *
- * @package Cielo\API30\Ecommerce
+ * Class RecurrentPayment.
  */
 class RecurrentPayment implements \JsonSerializable
 {
+    public const INTERVAL_MONTHLY = 'Monthly';
 
-    const INTERVAL_MONTHLY = 'Monthly';
+    public const INTERVAL_BIMONTHLY = 'Bimonthly';
 
-    const INTERVAL_BIMONTHLY = 'Bimonthly';
+    public const INTERVAL_QUARTERLY = 'Quarterly';
 
-    const INTERVAL_QUARTERLY = 'Quarterly';
+    public const INTERVAL_SEMIANNUAL = 'SemiAnnual';
 
-    const INTERVAL_SEMIANNUAL = 'SemiAnnual';
-
-    const INTERVAL_ANNUAL = 'Annual';
+    public const INTERVAL_ANNUAL = 'Annual';
 
     private $authorizeNow;
     private $recurrentPaymentId;
@@ -51,8 +48,6 @@ class RecurrentPayment implements \JsonSerializable
     }
 
     /**
-     * @param $json
-     *
      * @return RecurrentPayment
      */
     public static function fromJson($json)
@@ -68,33 +63,30 @@ class RecurrentPayment implements \JsonSerializable
         return $recurrentPayment;
     }
 
-    /**
-     * @param \stdClass $data
-     */
     public function populate(\stdClass $data)
     {
-        $this->authorizeNow       = isset($data->AuthorizeNow) ? !!$data->AuthorizeNow : false;
+        $this->authorizeNow = isset($data->AuthorizeNow) ? (bool) $data->AuthorizeNow : false;
         $this->recurrentPaymentId = isset($data->RecurrentPaymentId) ? $data->RecurrentPaymentId : null;
-        $this->nextRecurrency     = isset($data->NextRecurrency) ? $data->NextRecurrency : null;
-        $this->startDate          = isset($data->StartDate) ? $data->StartDate : null;
-        $this->endDate            = isset($data->EndDate) ? $data->EndDate : null;
-        $this->interval           = isset($data->Interval) ? $data->Interval : null;
+        $this->nextRecurrency = isset($data->NextRecurrency) ? $data->NextRecurrency : null;
+        $this->startDate = isset($data->StartDate) ? $data->StartDate : null;
+        $this->endDate = isset($data->EndDate) ? $data->EndDate : null;
+        $this->interval = isset($data->Interval) ? $data->Interval : null;
 
-        $this->amount                = isset($data->Amount) ? $data->Amount : null;
-        $this->country               = isset($data->Country) ? $data->Country : null;
-        $this->createDate            = isset($data->CreateDate) ? $data->CreateDate : null;
-        $this->currency              = isset($data->Currency) ? $data->Currency : null;
-        $this->currentRecurrencyTry  = isset($data->CurrentRecurrencyTry) ? $data->CurrentRecurrencyTry : null;
-        $this->provider              = isset($data->Provider) ? $data->Provider : null;
-        $this->recurrencyDay         = isset($data->RecurrencyDay) ? $data->RecurrencyDay : null;
+        $this->amount = isset($data->Amount) ? $data->Amount : null;
+        $this->country = isset($data->Country) ? $data->Country : null;
+        $this->createDate = isset($data->CreateDate) ? $data->CreateDate : null;
+        $this->currency = isset($data->Currency) ? $data->Currency : null;
+        $this->currentRecurrencyTry = isset($data->CurrentRecurrencyTry) ? $data->CurrentRecurrencyTry : null;
+        $this->provider = isset($data->Provider) ? $data->Provider : null;
+        $this->recurrencyDay = isset($data->RecurrencyDay) ? $data->RecurrencyDay : null;
         $this->successfulRecurrences = isset($data->SuccessfulRecurrences) ? $data->SuccessfulRecurrences : null;
 
-        $this->links                 = isset($data->Links) ? $data->Links : [];
+        $this->links = isset($data->Links) ? $data->Links : [];
         $this->recurrentTransactions = isset($data->RecurrentTransactions) ? $data->RecurrentTransactions : [];
 
-        $this->reasonCode    = isset($data->ReasonCode) ? $data->ReasonCode : null;
+        $this->reasonCode = isset($data->ReasonCode) ? $data->ReasonCode : null;
         $this->reasonMessage = isset($data->ReasonMessage) ? $data->ReasonMessage : null;
-        $this->status        = isset($data->Status) ? $data->Status : null;
+        $this->status = isset($data->Status) ? $data->Status : null;
     }
 
     public function jsonSerialize(): mixed
@@ -102,121 +94,77 @@ class RecurrentPayment implements \JsonSerializable
         return get_object_vars($this);
     }
 
-    /**
-     * @return mixed
-     */
     public function getRecurrentPaymentId()
     {
         return $this->recurrentPaymentId;
     }
 
-    /**
-     * @return mixed
-     */
     public function getReasonCode()
     {
         return $this->reasonCode;
     }
 
-    /**
-     * @return mixed
-     */
     public function getReasonMessage()
     {
         return $this->reasonMessage;
     }
 
-    /**
-     * @return mixed
-     */
     public function getNextRecurrency()
     {
         return $this->nextRecurrency;
     }
 
-    /**
-     * @return mixed
-     */
     public function getAmount()
     {
         return $this->amount;
     }
 
-    /**
-     * @return mixed
-     */
     public function getCountry()
     {
         return $this->country;
     }
 
-    /**
-     * @return mixed
-     */
     public function getCreateDate()
     {
         return $this->createDate;
     }
 
-    /**
-     * @return mixed
-     */
     public function getCurrency()
     {
         return $this->currency;
     }
 
-    /**
-     * @return mixed
-     */
     public function getCurrentRecurrencyTry()
     {
         return $this->currentRecurrencyTry;
     }
 
-    /**
-     * @return mixed
-     */
     public function getProvider()
     {
         return $this->provider;
     }
 
-    /**
-     * @return mixed
-     */
     public function getRecurrencyDay()
     {
         return $this->recurrencyDay;
     }
 
-    /**
-     * @return mixed
-     */
     public function getSuccessfulRecurrences()
     {
         return $this->successfulRecurrences;
     }
 
-    /**
-     * @return mixed
-     */
     public function getStatus()
     {
         return $this->status;
     }
 
-    /**
-     * @return mixed
-     */
     public function getAuthorizeNow()
     {
         return $this->authorizeNow;
     }
 
     /**
-     * @param $authorizeNow
-     *
      * @return $this
      */
     public function setAuthorizeNow($authorizeNow)
@@ -226,17 +174,12 @@ class RecurrentPayment implements \JsonSerializable
         return $this;
     }
 
-    /**
-     * @return mixed
-     */
     public function getStartDate()
     {
         return $this->startDate;
     }
 
     /**
-     * @param $startDate
-     *
      * @return $this
      */
     public function setStartDate($startDate)
@@ -246,17 +189,12 @@ class RecurrentPayment implements \JsonSerializable
         return $this;
     }
 
-    /**
-     * @return mixed
-     */
     public function getEndDate()
     {
         return $this->endDate;
     }
 
     /**
-     * @param $endDate
-     *
      * @return $this
      */
     public function setEndDate($endDate)
@@ -266,17 +204,12 @@ class RecurrentPayment implements \JsonSerializable
         return $this;
     }
 
-    /**
-     * @return mixed
-     */
     public function getInterval()
     {
         return $this->interval;
     }
 
     /**
-     * @param $interval
-     *
      * @return $this
      */
     public function setInterval($interval)

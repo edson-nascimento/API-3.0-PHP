@@ -494,4 +494,4 @@ try {
 
 ## Manual
 
-Para mais informações sobre a integração com a API 3.0 da Cielo, vide o manual em: [Integração API 3.0](https://developercielo.github.io/manual/cielo-ecommerce)
+Para mais informações sobre a integração com a API 3.0 da Cielo, vide o manual em: [Integração API 3.0](https://docs.cielo.com.br/ecommerce-cielo/docs/sobre-api-ecommerce)

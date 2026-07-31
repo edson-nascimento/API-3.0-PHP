@@ -4,5 +4,5 @@ vendor
 /.settings/
 /.project
 /.buildpath
-/.vscode
+.vscode/settings.json
 /cache

@@ -3,82 +3,80 @@
 namespace Cielo\API30\Ecommerce;
 
 /**
- * Class CreditCard
- *
- * @package Cielo\API30\Ecommerce
+ * Class CreditCard.
  */
 class CreditCard implements \JsonSerializable, CieloSerializable
 {
     /**
-     * Bandeira Visa
+     * Bandeira Visa.
      */
-    const VISA = 'Visa';
+    public const VISA = 'Visa';
 
     /**
-     * Bandeira Mastercard
+     * Bandeira Mastercard.
      */
-    const MASTERCARD = 'Master';
+    public const MASTERCARD = 'Master';
 
     /**
-     * Bandeira American Express
+     * Bandeira American Express.
      */
-    const AMEX = 'Amex';
+    public const AMEX = 'Amex';
 
     /**
-     * Bandeira ELO
+     * Bandeira ELO.
      */
-    const ELO = 'Elo';
+    public const ELO = 'Elo';
 
     /**
-     * Bandeira Aura
+     * Bandeira Aura.
      */
-    const AURA = 'Aura';
+    public const AURA = 'Aura';
 
     /**
-     * Bandeira JCB
+     * Bandeira JCB.
      */
-    const JCB = 'JCB';
+    public const JCB = 'JCB';
 
     /**
-     * Bandeira Diners
+     * Bandeira Diners.
      */
-    const DINERS = 'Diners';
+    public const DINERS = 'Diners';
 
     /**
-     * Bandeira Discover
+     * Bandeira Discover.
      */
-    const DISCOVER = 'Discover';
+    public const DISCOVER = 'Discover';
 
     /**
-     * Bandeira Hipercard
+     * Bandeira Hipercard.
      */
-    const HIPERCARD = 'Hipercard';
+    public const HIPERCARD = 'Hipercard';
 
-    /** @var string $cardNumber */
+    /** @var string */
     private $cardNumber;
 
-    /** @var string $holder */
+    /** @var string */
     private $holder;
 
-    /** @var string $expirationDate */
+    /** @var string */
     private $expirationDate;
 
-    /** @var string $securityCode */
+    /** @var string */
     private $securityCode;
 
-    /** @var bool $saveCard */
+    /** @var bool */
     private $saveCard = false;
 
-    /** @var string $brand */
+    /** @var string */
     private $brand;
 
-    /** @var string $cardToken */
+    /** @var string */
     private $cardToken;
 
-    /** @var string $customerName */
+    /** @var string */
     private $customerName;
 
-    /** @var \stdClass $links */
+    /** @var \stdClass */
     private $links;
 
     /**
@@ -88,27 +86,24 @@ class CreditCard implements \JsonSerializable, CieloSerializable
      */
     public static function fromJson($json)
     {
-        $object    = \json_decode($json);
+        $object = \json_decode($json);
         $cardToken = new CreditCard();
         $cardToken->populate($object);
 
         return $cardToken;
     }
 
-    /**
-     * @inheritdoc
-     */
     public function populate(\stdClass $data)
     {
-        $this->cardNumber     = isset($data->CardNumber) ? $data->CardNumber : null;
-        $this->holder         = isset($data->Holder) ? $data->Holder : null;
+        $this->cardNumber = isset($data->CardNumber) ? $data->CardNumber : null;
+        $this->holder = isset($data->Holder) ? $data->Holder : null;
         $this->expirationDate = isset($data->ExpirationDate) ? $data->ExpirationDate : null;
-        $this->securityCode   = isset($data->SecurityCode) ? $data->SecurityCode : null;
-        $this->saveCard       = isset($data->SaveCard) ? !!$data->SaveCard : false;
-        $this->brand          = isset($data->Brand) ? $data->Brand : null;
-        $this->cardToken      = isset($data->CardToken) ? $data->CardToken : null;
-        $this->links          = isset($data->Links) ? $data->Links : new \stdClass();
-        $this->customerName   = isset($data->CustomerName) ? $data->CustomerName : null;
+        $this->securityCode = isset($data->SecurityCode) ? $data->SecurityCode : null;
+        $this->saveCard = isset($data->SaveCard) ? (bool) $data->SaveCard : false;
+        $this->brand = isset($data->Brand) ? $data->Brand : null;
+        $this->cardToken = isset($data->CardToken) ? $data->CardToken : null;
+        $this->links = isset($data->Links) ? $data->Links : new \stdClass();
+        $this->customerName = isset($data->CustomerName) ? $data->CustomerName : null;
     }
 
     public function jsonSerialize(): mixed
@@ -116,17 +111,12 @@ class CreditCard implements \JsonSerializable, CieloSerializable
         return get_object_vars($this);
     }
 
-    /**
-     * @return mixed
-     */
     public function getCardNumber()
     {
         return $this->cardNumber;
     }
 
     /**
-     * @param $cardNumber
-     *
      * @return $this
      */
     public function setCardNumber($cardNumber)
@@ -136,17 +126,12 @@ class CreditCard implements \JsonSerializable, CieloSerializable
         return $this;
     }
 
-    /**
-     * @return mixed
-     */
     public function getHolder()
     {
         return $this->holder;
     }
 
     /**
-     * @param $holder
-     *
      * @return $this
      */
     public function setHolder($holder)
@@ -156,17 +141,12 @@ class CreditCard implements \JsonSerializable, CieloSerializable
         return $this;
     }
 
-    /**
-     * @return mixed
-     */
     public function getExpirationDate()
     {
         return $this->expirationDate;
     }
 
     /**
-     * @param $expirationDate
-     *
      * @return $this
      */
     public function setExpirationDate($expirationDate)
@@ -176,17 +156,12 @@ class CreditCard implements \JsonSerializable, CieloSerializable
         return $this;
     }
 
-    /**
-     * @return mixed
-     */
     public function getSecurityCode()
     {
         return $this->securityCode;
     }
 
     /**
-     * @param $securityCode
-     *
      * @return $this
      */
     public function setSecurityCode($securityCode)
@@ -205,8 +180,6 @@ class CreditCard implements \JsonSerializable, CieloSerializable
     }
 
     /**
-     * @param $saveCard
-     *
      * @return $this
      */
     public function setSaveCard($saveCard)
@@ -216,17 +189,12 @@ class CreditCard implements \JsonSerializable, CieloSerializable
         return $this;
     }
 
-    /**
-     * @return mixed
-     */
     public function getBrand()
     {
         return $this->brand;
     }
 
     /**
-     * @param $brand
-     *
      * @return $this
      */
     public function setBrand($brand)
@@ -236,17 +204,12 @@ class CreditCard implements \JsonSerializable, CieloSerializable
         return $this;
     }
 
-    /**
-     * @return mixed
-     */
     public function getCardToken()
     {
         return $this->cardToken;
     }
 
     /**
-     * @param $cardToken
-     *
      * @return $this
      */
     public function setCardToken($cardToken)

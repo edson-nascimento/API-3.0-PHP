@@ -8,23 +8,16 @@ use Cielo\API30\Merchant;
 use Psr\Log\LoggerInterface;
 
 /**
- * Class QuerySaleRequest
- *
- * @package Cielo\API30\Ecommerce\Request
+ * Class QuerySaleRequest.
  */
 class QuerySaleRequest extends AbstractRequest
 {
-
     private $environment;
 
-	/**
-	 * QuerySaleRequest constructor.
-	 *
-	 * @param Merchant $merchant
-	 * @param Environment $environment
-	 * @param LoggerInterface|null $logger
-	 */
-    public function __construct(Merchant $merchant, Environment $environment, LoggerInterface $logger = null)
+    /**
+     * QuerySaleRequest constructor.
+     */
+    public function __construct(Merchant $merchant, Environment $environment, ?LoggerInterface $logger = null)
     {
         parent::__construct($merchant, $logger);
 
@@ -32,9 +25,8 @@ class QuerySaleRequest extends AbstractRequest
     }
 
     /**
-     * @param $paymentId
-     *
      * @return Sale
+     *
      * @throws \Cielo\API30\Ecommerce\Request\CieloRequestException
      * @throws \RuntimeException
      */
@@ -46,8 +38,6 @@ class QuerySaleRequest extends AbstractRequest
     }
 
     /**
-     * @param $json
-     *
      * @return Sale
      */
     protected function unserialize($json)
