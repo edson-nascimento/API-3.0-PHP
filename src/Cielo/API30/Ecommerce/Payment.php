@@ -41,6 +41,8 @@ class Payment implements \JsonSerializable
 
     private $debitCard;
 
+    private $externalAuthentication;
+
     private $authenticationUrl;
 
     private $tid;
@@ -160,6 +162,11 @@ class Payment implements \JsonSerializable
             $this->debitCard->populate($data->DebitCard);
         }
 
+        if (isset($data->ExternalAuthentication)) {
+            $this->externalAuthentication = new ExternalAuthentication();
+            $this->externalAuthentication->populate($data->ExternalAuthentication);
+        }
+
         $this->expirationDate = isset($data->ExpirationDate) ? $data->ExpirationDate : null;
         $this->url = isset($data->Url) ? $data->Url : null;
         $this->boletoNumber = isset($data->BoletoNumber) ? $data->BoletoNumber : null;
@@ -240,6 +247,43 @@ class Payment implements \JsonSerializable
         $this->setDebitCard($card);
 
         return $card;
+    }
+
+    /**
+     * Configura os dados de autenticação externa (3DS 2.2) da transação.
+     *
+     * @param string|null $cavv
+     * @param string|null $eci
+     * @param string|null $version
+     *
+     * @return ExternalAuthentication
+     */
+    public function externalAuthentication($cavv = null, $eci = null, $version = null)
+    {
+        $external = new ExternalAuthentication();
+        $external->setCavv($cavv)->setEci($eci)->setVersion($version);
+        $this->setExternalAuthentication($external);
+
+        return $external;
+    }
+
+    /**
+     * Configura o fluxo Data Only (3DS 2.2), ajustando Authenticate = false e
+     * ExternalAuthentication.DataOnly = true.
+     *
+     * @param string $eci
+     * @param string $version
+     *
+     * @return ExternalAuthentication
+     */
+    public function dataOnlyAuthentication($eci, $version = '2.2.0')
+    {
+        $this->setAuthenticate(false);
+
+        $external = $this->externalAuthentication(null, $eci, $version);
+        $external->setDataOnly(true);
+
+        return $external;
     }
 
     /**
@@ -404,6 +448,24 @@ class Payment implements \JsonSerializable
     public function setDebitCard($debitCard)
     {
         $this->debitCard = $debitCard;
+
+        return $this;
+    }
+
+    /**
+     * @return ExternalAuthentication
+     */
+    public function getExternalAuthentication()
+    {
+        return $this->externalAuthentication;
+    }
+
+    /**
+     * @return $this
+     */
+    public function setExternalAuthentication(ExternalAuthentication $externalAuthentication)
+    {
+        $this->externalAuthentication = $externalAuthentication;
 
         return $this;
     }

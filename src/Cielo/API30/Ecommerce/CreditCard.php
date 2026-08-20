@@ -87,10 +87,10 @@ class CreditCard implements \JsonSerializable, CieloSerializable
     public static function fromJson($json)
     {
         $object = \json_decode($json);
-        $cardToken = new CreditCard();
-        $cardToken->populate($object);
+        $card = new CreditCard();
+        $card->populate($object);
 
-        return $cardToken;
+        return $card;
     }
 
     public function populate(\stdClass $data)
