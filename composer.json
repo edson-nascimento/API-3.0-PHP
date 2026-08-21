@@ -12,7 +12,8 @@
     "phpunit/phpunit": "^12.5.33",
     "phpstan/phpstan": "^2.2.8",
     "kint-php/kint": "^6.1.0",
-    "friendsofphp/php-cs-fixer": "^3.95.20"
+    "friendsofphp/php-cs-fixer": "^3.95.21",
+    "monolog/monolog": "^3.10.0"
   },
   "autoload": {
     "psr-0": {

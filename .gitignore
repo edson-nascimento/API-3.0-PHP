@@ -6,3 +6,5 @@ vendor
 /.buildpath
 .vscode/settings.json
 /cache
+env.test.php
+error_log

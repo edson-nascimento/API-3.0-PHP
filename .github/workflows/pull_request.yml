@@ -6,10 +6,16 @@ on:
       - reopened
       - ready_for_review
   workflow_dispatch:
+    inputs:
+      run_e2e:
+        description: 'Rodar testes E2E/integração (composer test:e2e)'
+        required: false
+        type: boolean
+        default: false
 
 env:
   PHP_VERSION: 8.3
-  PHP_EXTENSIONS: mbstring
+  PHP_EXTENSIONS: mbstring, curl
   PHP_TOOLS: composer:v2, phpunit:11
 
 permissions:
@@ -53,6 +59,15 @@ jobs:
 
       - name: Static analysis
         run: composer phpstan
-        
+
       - name: Run unit tests
         run: composer test:unit
+
+      - name: Run E2E tests
+        if: ${{ github.event_name == 'workflow_dispatch' && inputs.run_e2e }}
+        env:
+          CIELO_MERCHANT_ID: ${{ secrets.CIELO_MERCHANT_ID }}
+          CIELO_MERCHANT_KEY: ${{ secrets.CIELO_MERCHANT_KEY }}
+          CIELO_CLIENT_ID_3DS: ${{ secrets.CIELO_CLIENT_ID_3DS }}
+          CIELO_CLIENT_SECRET_3DS: ${{ secrets.CIELO_CLIENT_SECRET_3DS }}
+        run: composer test:e2e
