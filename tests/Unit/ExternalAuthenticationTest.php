@@ -4,7 +4,6 @@ namespace TestApp\Unit;
 
 use Cielo\API30\Ecommerce\CreditCard;
 use Cielo\API30\Ecommerce\ExternalAuthentication;
-use Cielo\API30\Ecommerce\Payment;
 use Cielo\API30\Ecommerce\Sale;
 use PHPUnit\Framework\TestCase;
 
