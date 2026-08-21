@@ -29,7 +29,7 @@ abstract class AbstractRequest
      * @throws \Cielo\API30\Ecommerce\Request\CieloRequestException
      * @throws \RuntimeException
      */
-    protected function sendRequest($method, $url, ?\JsonSerializable $content = null)
+    protected function sendRequest(string $method, string $url, ?\JsonSerializable $content = null)
     {
         $client = new CieloHttpClient($this->logger);
 
