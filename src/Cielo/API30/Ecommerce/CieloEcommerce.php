@@ -7,6 +7,7 @@ use Cielo\API30\Ecommerce\Request\QueryRecurrentPaymentRequest;
 use Cielo\API30\Ecommerce\Request\QuerySaleRequest;
 use Cielo\API30\Ecommerce\Request\TokenizeCardRequest;
 use Cielo\API30\Ecommerce\Request\UpdateSaleRequest;
+use Cielo\API30\Ecommerce\Service\ThreeDSecureService;
 use Cielo\API30\Merchant;
 use Psr\Log\LoggerInterface;
 
@@ -164,5 +165,28 @@ class CieloEcommerce
         $tokenizeCardRequest = new TokenizeCardRequest($this->merchant, $this->environment, $this->logger);
 
         return $tokenizeCardRequest->execute($card);
+    }
+
+    /**
+     * Cria o token de acesso 3DS (Cielo OAuth / Braspag MPI) para uso no script de autenticação do front-end.
+     *
+     * @see https://docs.cielo.com.br/ecommerce-cielo/docs/token-acesso
+     */
+    public function create3DSAccessToken(
+        string $clientId,
+        string $clientSecret,
+        int $establishmentCode,
+        string $merchantName,
+        int $mcc,
+    ): AccessToken {
+        $threeDSecureService = new ThreeDSecureService($this->environment, $this->logger);
+
+        $threeDSecureService->setClientId($clientId)
+            ->setClientSecret($clientSecret)
+            ->setEstablishmentCode($establishmentCode)
+            ->setMerchantName($merchantName)
+            ->setMcc($mcc);
+
+        return $threeDSecureService->generateAccessToken();
     }
 }

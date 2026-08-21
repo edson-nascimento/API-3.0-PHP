@@ -20,4 +20,11 @@ interface Environment
      * @return string the Api Query URL
      */
     public function getApiQueryURL();
+
+    /**
+     * Gets the environment's MPI (Braspag 3DS) URL.
+     *
+     * @return string the MPI URL
+     */
+    public function getMpiUrl();
 }
