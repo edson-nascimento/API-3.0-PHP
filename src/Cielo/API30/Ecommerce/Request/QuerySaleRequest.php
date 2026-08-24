@@ -32,7 +32,7 @@ class QuerySaleRequest extends AbstractRequest
      */
     public function execute($paymentId)
     {
-        $url = $this->environment->getApiQueryURL() . '1/sales/' . $paymentId;
+        $url = $this->environment->getApiQueryUrl() . '1/sales/' . $paymentId;
 
         return $this->sendRequest('GET', $url);
     }

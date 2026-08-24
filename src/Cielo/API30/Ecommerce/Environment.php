@@ -11,13 +11,16 @@ class Environment implements \Cielo\API30\Environment
 
     private $apiQuery;
 
+    private $mpi;
+
     /**
      * Environment constructor.
      */
-    private function __construct($api, $apiQuery)
+    private function __construct($api, $apiQuery, $mpi)
     {
         $this->api = $api;
         $this->apiQuery = $apiQuery;
+        $this->mpi = $mpi;
     }
 
     /**
@@ -25,10 +28,11 @@ class Environment implements \Cielo\API30\Environment
      */
     public static function sandbox()
     {
-        $api = 'https://apisandbox.cieloecommerce.cielo.com.br/';
-        $apiQuery = 'https://apiquerysandbox.cieloecommerce.cielo.com.br/';
-
-        return new Environment($api, $apiQuery);
+        return new Environment(
+            api: 'https://apisandbox.cieloecommerce.cielo.com.br/',
+            apiQuery: 'https://apiquerysandbox.cieloecommerce.cielo.com.br/',
+            mpi: 'https://mpisandbox.braspag.com.br/',
+        );
     }
 
     /**
@@ -36,10 +40,11 @@ class Environment implements \Cielo\API30\Environment
      */
     public static function production()
     {
-        $api = 'https://api.cieloecommerce.cielo.com.br/';
-        $apiQuery = 'https://apiquery.cieloecommerce.cielo.com.br/';
-
-        return new Environment($api, $apiQuery);
+        return new Environment(
+            api: 'https://api.cieloecommerce.cielo.com.br/',
+            apiQuery: 'https://apiquery.cieloecommerce.cielo.com.br/',
+            mpi: 'https://mpi.braspag.com.br/',
+        );
     }
 
     /**
@@ -57,8 +62,18 @@ class Environment implements \Cielo\API30\Environment
      *
      * @return string Api Query URL
      */
-    public function getApiQueryURL()
+    public function getApiQueryUrl()
     {
         return $this->apiQuery;
+    }
+
+    /**
+     * Gets the environment's MPI (Braspag 3DS) URL.
+     *
+     * @return string the MPI URL
+     */
+    public function getMpiUrl()
+    {
+        return $this->mpi;
     }
 }

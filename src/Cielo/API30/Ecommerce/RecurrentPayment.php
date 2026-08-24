@@ -154,6 +154,11 @@ class RecurrentPayment implements \JsonSerializable
         return $this->successfulRecurrences;
     }
 
+    /**
+     * @return int|null
+     *
+     * @see TransactionStatus
+     */
     public function getStatus()
     {
         return $this->status;
