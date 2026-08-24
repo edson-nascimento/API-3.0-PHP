@@ -758,6 +758,11 @@ class Payment implements \JsonSerializable
         return $this;
     }
 
+    /**
+     * @return int|null
+     *
+     * @see TransactionStatus
+     */
     public function getStatus()
     {
         return $this->status;

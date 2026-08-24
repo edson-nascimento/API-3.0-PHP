@@ -5,7 +5,7 @@ namespace TestApp\E2E;
 use Cielo\API30\Ecommerce\CreditCard;
 use Cielo\API30\Ecommerce\Payment;
 use Cielo\API30\Ecommerce\Sale;
-use DateTimeImmutable;
+use Cielo\API30\Ecommerce\TransactionStatus;
 use PHPUnit\Framework\Attributes\Depends;
 use PHPUnit\Framework\Attributes\Group;
 
@@ -25,7 +25,7 @@ final class PaymentIntegrationTest extends AbstractE2ETestCase
 
     public function testAuthorizeCreditCardPayment(): Sale
     {
-        $dateExpiration = new DateTimeImmutable('+5 years');
+        $dateExpiration = new \DateTimeImmutable('+5 years');
         $sale = new Sale($this->uniqueMerchantOrderId('CC'));
         $sale->customer('Comprador E2E Credito')
             ->setIdentity('12345678909')
@@ -43,7 +43,7 @@ final class PaymentIntegrationTest extends AbstractE2ETestCase
         $this->assertInstanceOf(Payment::class, $payment);
         $this->assertNotEmpty($payment->getPaymentId());
         $this->assertSame(self::CREDIT_CARD_AMOUNT, (int) $payment->getAmount());
-        $this->assertSame(1, (int) $payment->getStatus());
+        $this->assertSame(TransactionStatus::AUTHORIZED, (int) $payment->getStatus());
 
         return $created;
     }
@@ -61,7 +61,7 @@ final class PaymentIntegrationTest extends AbstractE2ETestCase
 
         $captured = $this->getCieloEcommerce()->captureSale($paymentId, $amount);
 
-        $this->assertSame(2, (int) $captured->getStatus());
+        $this->assertSame(TransactionStatus::PAYMENT_CONFIRMED, (int) $captured->getStatus());
         $this->assertReturnedAmountMatches($amount, $captured);
 
         $queried = $this->getCieloEcommerce()->getSale($paymentId)->getPayment();
@@ -76,7 +76,7 @@ final class PaymentIntegrationTest extends AbstractE2ETestCase
     #[Depends('testCaptureCreditCardPayment')]
     public function testCancelCreditCardPayment(Sale $sale, Payment $capturedPayment): void
     {
-        $this->assertSame(2, (int) $capturedPayment->getStatus());
+        $this->assertSame(TransactionStatus::PAYMENT_CONFIRMED, (int) $capturedPayment->getStatus());
 
         $authorized = $sale->getPayment();
         $this->assertInstanceOf(Payment::class, $authorized);
@@ -88,7 +88,7 @@ final class PaymentIntegrationTest extends AbstractE2ETestCase
 
         $cancelled = $this->getCieloEcommerce()->cancelSale($paymentId, $amount);
 
-        $this->assertContains((int) $cancelled->getStatus(), [10, 11]);
+        $this->assertContains((int) $cancelled->getStatus(), [TransactionStatus::VOIDED, TransactionStatus::REFUNDED]);
         $this->assertReturnedAmountMatches($amount, $cancelled);
 
         $queried = $this->getCieloEcommerce()->getSale($paymentId)->getPayment();
@@ -113,7 +113,7 @@ final class PaymentIntegrationTest extends AbstractE2ETestCase
         $this->assertSame(Payment::PAYMENTTYPE_PIX, $payment->getType());
         $this->assertSame(self::PIX_AMOUNT, (int) $payment->getAmount());
         $this->assertNotEmpty($payment->getQrCodeString());
-        $this->assertSame(12, (int) $payment->getStatus());
+        $this->assertSame(TransactionStatus::PENDING, (int) $payment->getStatus());
     }
 
     private function assertReturnedAmountMatches(int $sentAmount, Payment $payment): void

@@ -71,6 +71,25 @@ use Cielo\API30\Ecommerce\CreditCard;
 | JCB              | CreditCard::JCB        | Sim             | Sim                    | *Não*  | *Não*   |
 | Aura             | CreditCard::AURA       | Sim             | Sim                    | *Não*  | *Não*   |
 
+## Status da transação
+
+O status retornado em `Payment.Status` pode ser verificado usando as constantes de `TransactionStatus`:
+
+```php
+<?php
+require 'vendor/autoload.php';
+
+use Cielo\API30\Ecommerce\TransactionStatus;
+```
+
+Exemplo de uso:
+
+```php
+if ((int) $sale->getPayment()->getStatus() === TransactionStatus::AUTHORIZED) {
+    // apto a capturar
+}
+```
+
 ## Utilizando o SDK
 
 Para criar um pagamento simples com cartão de crédito com o SDK, basta fazer:
