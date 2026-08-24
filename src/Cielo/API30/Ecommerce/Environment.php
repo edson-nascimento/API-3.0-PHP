@@ -62,7 +62,7 @@ class Environment implements \Cielo\API30\Environment
      *
      * @return string Api Query URL
      */
-    public function getApiQueryURL()
+    public function getApiQueryUrl()
     {
         return $this->apiQuery;
     }
