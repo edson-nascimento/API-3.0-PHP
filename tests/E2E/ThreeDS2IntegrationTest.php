@@ -2,7 +2,6 @@
 
 namespace TestApp\E2E;
 
-use Cielo\API30\Ecommerce\AccessToken;
 use PHPUnit\Framework\Attributes\Group;
 
 #[Group('payment')]

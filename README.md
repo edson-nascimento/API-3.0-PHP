@@ -47,7 +47,7 @@ Adicionar o `repositories` no `composer.json`
 
 Com a dependência adicionada ao `composer.json`, basta executar:
 
-```
+```bash
 composer update
 ```
 
@@ -562,6 +562,31 @@ $token = (new CieloEcommerce($merchant, $environment))->create3DSAccessToken(
 
 $accessToken = $token->getAccessToken();
 ```
+
+### Outros endpoints (RequestService)
+
+Qualquer endpoint da API pode ser utilizado através dos métodos `apiQueryRequest()` e `apiRequest()` do `RequestService`.
+
+```php
+$cielo = new CieloEcommerce($merchant, $environment);
+
+// Consulta BIN do cartão
+$response = $cielo->requestService()->apiQueryRequest('1/cardBin/539861');
+$cardBin = $response->json();
+
+// Zero Auth
+$response = $cielo->requestService()->apiRequest(
+    method: 'POST',
+    endpoint: '1/zeroauth',
+    body: [
+        'CardNumber' => '5502095822650000',
+        'Holder' => 'Aline de Souza',
+        'ExpirationDate' => '12/2035',
+        'SecurityCode' => '123',
+        'Brand' => 'Master',
+    ],
+);
+$zeroAuth = $response->json();
 ```
 
 ## Manual

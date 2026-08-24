@@ -7,6 +7,7 @@ use Cielo\API30\Ecommerce\Request\QueryRecurrentPaymentRequest;
 use Cielo\API30\Ecommerce\Request\QuerySaleRequest;
 use Cielo\API30\Ecommerce\Request\TokenizeCardRequest;
 use Cielo\API30\Ecommerce\Request\UpdateSaleRequest;
+use Cielo\API30\Ecommerce\Service\RequestService;
 use Cielo\API30\Ecommerce\Service\ThreeDSecureService;
 use Cielo\API30\Merchant;
 use Psr\Log\LoggerInterface;
@@ -179,7 +180,7 @@ class CieloEcommerce
         string $merchantName,
         int $mcc,
     ): AccessToken {
-        $threeDSecureService = new ThreeDSecureService($this->environment, $this->logger);
+        $threeDSecureService = new ThreeDSecureService($this->merchant, $this->environment, $this->logger);
 
         $threeDSecureService->setClientId($clientId)
             ->setClientSecret($clientSecret)
@@ -188,5 +189,10 @@ class CieloEcommerce
             ->setMcc($mcc);
 
         return $threeDSecureService->generateAccessToken();
+    }
+
+    public function requestService(): RequestService
+    {
+        return new RequestService($this->merchant, $this->environment, $this->logger);
     }
 }

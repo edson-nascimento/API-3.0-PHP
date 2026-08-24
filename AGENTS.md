@@ -65,6 +65,7 @@
 - Corrigir formato: `composer format:fix`
 - Lint padrao do projeto: `composer lint`
 - PHPUnit (todos os testes, exceto grupo `payment`): `composer phpunit`
+- PHPUnit (todos os testes): `composer test:all`
 - Testes unitarios: `composer test:unit`
 - Testes E2E: `composer test:e2e` (requer credenciais e ambiente configurados)
 - Validar `composer.json`: `composer validate --strict`

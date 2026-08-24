@@ -4,7 +4,7 @@ namespace Cielo\API30\Ecommerce\Service;
 
 use Cielo\API30\Ecommerce\Environment;
 use Cielo\API30\Http\CieloHttpClient;
-use Cielo\API30\Http\CieloHttpResponse;
+use Cielo\API30\Merchant;
 use Psr\Log\LoggerInterface;
 
 abstract class AbstractService
@@ -12,6 +12,7 @@ abstract class AbstractService
     private CieloHttpClient $httpClient;
 
     public function __construct(
+        protected Merchant $merchant,
         protected Environment $environment,
         protected ?LoggerInterface $logger = null,
         ?CieloHttpClient $httpClient = null,
@@ -24,12 +25,14 @@ abstract class AbstractService
         return $this->httpClient;
     }
 
-    /**
-     * @param array<string, mixed>|object $body
-     * @param array<string, string>       $headers
-     */
-    public function sendRequest(string $method, string $endpoint, array|object $body = [], array $headers = []): CieloHttpResponse
+    /** @return array{MerchantId: string, MerchantKey: string, RequestId: string} */
+    protected function getApiAuthHeaders(): array
     {
-        return $this->getHttpClient()->request($method, $endpoint, $body, $headers);
+        return [
+            // 'Accept-Encoding' => 'gzip',
+            'MerchantId' => $this->merchant->getId(),
+            'MerchantKey' => $this->merchant->getKey(),
+            'RequestId' => uniqid(),
+        ];
     }
 }
