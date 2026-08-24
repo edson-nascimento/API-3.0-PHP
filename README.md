@@ -511,6 +511,59 @@ try {
 // ...
 ```
 
+### Pagamento com autenticação 3DS (ExternalAuthentication)
+
+Após a autenticação 3DS no front-end, envie os dados retornados no pagamento:
+
+```php
+use Cielo\API30\Ecommerce\ExternalAuthentication;
+
+$payment = $sale->payment(15700);
+$payment->setType(Payment::PAYMENTTYPE_CREDITCARD)
+    ->setAuthenticate(true)
+    ->creditCard('123', CreditCard::MASTERCARD)
+    ->setExpirationDate('12/2035')
+    ->setCardNumber('5502095822650000')
+    ->setHolder('Fulano de Tal');
+
+$payment->externalAuthentication(cavv: 'AAABB...', eci: '5', version: '2.2.0')
+    ->setXid('Uk5Z...')
+    ->setReferenceId('a24a5d87-b1a1-4aef-a37b-2f30b91274e6');
+
+// ou via setExternalAuthentication
+$external = (new ExternalAuthentication())
+    ->setCavv('AAABB...')
+    ->setEci('5')
+    ->setVersion('2.2.0');
+$payment->setExternalAuthentication($external);
+
+$sale = (new CieloEcommerce($merchant, $environment))->createSale($sale);
+```
+
+Para o fluxo Data Only (3DS 2.2), informe `dataOnly: true`:
+
+```php
+$payment->externalAuthentication(cavv: '4', eci: '5', dataOnly: true, version: '2.2.0')
+    ->setReferenceId('a24a5d87-b1a1-4aef-a37b-2f30b91274e6');
+```
+
+### Token 3DS para o front-end
+
+Gere o token de acesso no back-end e repasse ao script 3DS no front-end:
+
+```php
+$token = (new CieloEcommerce($merchant, $environment))->create3DSAccessToken(
+    clientId: 'SEU_CLIENT_ID_3DS',
+    clientSecret: 'SEU_CLIENT_SECRET_3DS',
+    establishmentCode: 1006993068,
+    merchantName: 'Loja Exemplo Ltda',
+    mcc: 5999,
+);
+
+$accessToken = $token->getAccessToken();
+```
+```
+
 ## Manual
 
 Para mais informações sobre a integração com a API 3.0 da Cielo, vide o manual em: [Integração API 3.0](https://docs.cielo.com.br/ecommerce-cielo/docs/sobre-api-ecommerce)

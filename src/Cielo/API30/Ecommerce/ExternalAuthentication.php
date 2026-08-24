@@ -20,7 +20,7 @@ class ExternalAuthentication implements \JsonSerializable, CieloSerializable
     private $eci;
 
     /** @var string */
-    private $version;
+    private $version = '2.2.0';
 
     /** @var string|null */
     private $referenceId;

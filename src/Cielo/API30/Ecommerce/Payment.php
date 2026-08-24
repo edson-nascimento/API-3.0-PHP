@@ -252,36 +252,23 @@ class Payment implements \JsonSerializable
     /**
      * Configura os dados de autenticação externa (3DS 2.2) da transação.
      *
-     * @param string|null $cavv
-     * @param string|null $eci
-     * @param string|null $version
-     *
-     * @return ExternalAuthentication
+     * No fluxo Data Only, informe $dataOnly como true para ajustar Authenticate = false e ExternalAuthentication.DataOnly = true.
      */
-    public function externalAuthentication($cavv = null, $eci = null, $version = null)
-    {
+    public function externalAuthentication(
+        ?string $cavv = null,
+        ?string $eci = null,
+        bool $dataOnly = false,
+        string $version = '2.2.0',
+    ): ExternalAuthentication {
         $external = new ExternalAuthentication();
         $external->setCavv($cavv)->setEci($eci)->setVersion($version);
+
+        if ($dataOnly) {
+            $this->setAuthenticate(false);
+            $external->setDataOnly(true);
+        }
+
         $this->setExternalAuthentication($external);
-
-        return $external;
-    }
-
-    /**
-     * Configura o fluxo Data Only (3DS 2.2), ajustando Authenticate = false e
-     * ExternalAuthentication.DataOnly = true.
-     *
-     * @param string $eci
-     * @param string $version
-     *
-     * @return ExternalAuthentication
-     */
-    public function dataOnlyAuthentication($eci, $version = '2.2.0')
-    {
-        $this->setAuthenticate(false);
-
-        $external = $this->externalAuthentication(null, $eci, $version);
-        $external->setDataOnly(true);
 
         return $external;
     }

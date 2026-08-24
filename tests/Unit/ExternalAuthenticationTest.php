@@ -91,7 +91,7 @@ final class ExternalAuthenticationTest extends TestCase
         $payment->setAuthenticate(true);
         $payment->creditCard('123', CreditCard::VISA);
 
-        $external = $payment->externalAuthentication('AAABB...', '5', '2.2.0')
+        $external = $payment->externalAuthentication(cavv: 'AAABB...', eci: '5', version: '2.2.0')
             ->setXid('Uk5Z...')
             ->setReferenceId('a24a5d87-b1a1-4aef-a37b-2f30b91274e6');
 
@@ -112,7 +112,7 @@ final class ExternalAuthenticationTest extends TestCase
         $payment = $sale->payment(15700);
         $payment->creditCard('123', CreditCard::MASTERCARD);
 
-        $external = $payment->dataOnlyAuthentication('4', '2.2.0')
+        $external = $payment->externalAuthentication(eci: '4', dataOnly: true, version: '2.2.0')
             ->setReferenceId('a24a5d87-b1a1-4aef-a37b-2f30b91274e6');
 
         $this->assertFalse($payment->getAuthenticate());

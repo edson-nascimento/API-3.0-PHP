@@ -23,6 +23,21 @@ final class PaymentIntegrationTest extends AbstractE2ETestCase
      */
     private const SANDBOX_VISA_NUMBER = '4024007153763191';
 
+    /**
+     * Cartão sandbox Mastercard para fluxos 3DS 2.2.
+     *
+     * @see https://docs.cielo.com.br/ecommerce-cielo/docs/autorizacao-autenticacao
+     */
+    private const SANDBOX_MASTERCARD_3DS_NUMBER = '5502095822650000';
+
+    private const THREEDS22_CAVV = 'AAABB2gHA1B5EFNjWQcDAAAAAAB=';
+
+    private const THREEDS22_XID = 'Uk5ZanBHcWw2RjRCbEN5dGtiMTB=';
+
+    private const THREEDS22_ECI = '5';
+
+    private const THREEDS22_VERSION = '2.2.0';
+
     public function testAuthorizeCreditCardPayment(): Sale
     {
         $dateExpiration = new \DateTimeImmutable('+5 years');
@@ -95,6 +110,68 @@ final class PaymentIntegrationTest extends AbstractE2ETestCase
         $this->assertInstanceOf(Payment::class, $queried);
         $this->assertSame($amount, (int) $queried->getAmount());
         $this->assertReturnedAmountMatches($amount, $queried);
+    }
+
+    public function testAuthorizeCreditCardPaymentWith3ds22Authentication(): void
+    {
+        $dateExpiration = new \DateTimeImmutable('+5 years');
+        $sale = new Sale($this->uniqueMerchantOrderId('3DS22'));
+        $sale->customer('Comprador E2E 3DS 2.2')
+            ->setIdentity('12345678909')
+            ->setIdentityType('CPF');
+
+        $payment = $sale->payment(self::CREDIT_CARD_AMOUNT);
+        $payment->setCapture(true)
+            ->setAuthenticate(true)
+            ->creditCard('123', CreditCard::MASTERCARD)
+            ->setExpirationDate($dateExpiration->format('m/Y'))
+            ->setCardNumber(self::SANDBOX_MASTERCARD_3DS_NUMBER)
+            ->setHolder('Comprador E2E 3DS 2.2');
+
+        $payment->externalAuthentication(
+            cavv: self::THREEDS22_CAVV,
+            eci: self::THREEDS22_ECI,
+            version: self::THREEDS22_VERSION,
+        )->setXid(self::THREEDS22_XID);
+
+        $created = $this->getCieloEcommerce()->createSale($sale);
+        $payment = $created->getPayment();
+
+        $this->assertInstanceOf(Payment::class, $payment);
+        $this->assertNotEmpty($payment->getPaymentId());
+        $this->assertSame(self::CREDIT_CARD_AMOUNT, (int) $payment->getAmount());
+        $this->assertSame(TransactionStatus::PAYMENT_CONFIRMED, (int) $payment->getStatus());
+    }
+
+    public function testAuthorizeCreditCardPaymentWith3ds22DataOnlyAuthentication(): void
+    {
+        $dateExpiration = new \DateTimeImmutable('+5 years');
+        $sale = new Sale($this->uniqueMerchantOrderId('3DS22DO'));
+        $sale->customer('Comprador E2E 3DS 2.2 Data Only')
+            ->setIdentity('12345678909')
+            ->setIdentityType('CPF');
+
+        $payment = $sale->payment(self::CREDIT_CARD_AMOUNT);
+        $payment->setCapture(true)
+            ->creditCard('123', CreditCard::MASTERCARD)
+            ->setExpirationDate($dateExpiration->format('m/Y'))
+            ->setCardNumber(self::SANDBOX_MASTERCARD_3DS_NUMBER)
+            ->setHolder('Comprador E2E 3DS 2.2 Data Only');
+
+        $payment->externalAuthentication(
+            cavv: self::THREEDS22_CAVV,
+            eci: self::THREEDS22_ECI,
+            dataOnly: true,
+            version: self::THREEDS22_VERSION,
+        )->setXid(self::THREEDS22_XID);
+
+        $created = $this->getCieloEcommerce()->createSale($sale);
+        $payment = $created->getPayment();
+
+        $this->assertInstanceOf(Payment::class, $payment);
+        $this->assertNotEmpty($payment->getPaymentId());
+        $this->assertSame(self::CREDIT_CARD_AMOUNT, (int) $payment->getAmount());
+        $this->assertSame(TransactionStatus::PAYMENT_CONFIRMED, (int) $payment->getStatus());
     }
 
     public function testCreatePixQrCodePayment(): void
