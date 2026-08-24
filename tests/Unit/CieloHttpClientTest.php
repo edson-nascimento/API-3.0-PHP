@@ -4,6 +4,8 @@ namespace TestApp\Unit;
 
 use Cielo\API30\Http\CieloHttpClient;
 use Cielo\API30\Http\CieloHttpResponse;
+use Monolog\Handler\TestHandler;
+use Monolog\Logger;
 use PHPUnit\Framework\TestCase;
 
 /**
@@ -147,5 +149,61 @@ final class CieloHttpClientTest extends TestCase
         $formatted = $client->exposeFormatHeaders(['', 'X-Foo: bar']);
 
         $this->assertSame(['X-Foo: bar'], $formatted);
+    }
+
+    public function testRequestLogsMaskedRequestAndResponse(): void
+    {
+        $handler = new TestHandler();
+        $logger = new Logger('test');
+        $logger->pushHandler($handler);
+
+        $client = new CieloHttpClient($logger);
+        $body = json_encode([
+            'cardNumber' => '1234567890123456',
+            'securityCode' => '123',
+            'access_token' => 'secret-token',
+        ], JSON_THROW_ON_ERROR);
+
+        $response = $client->request(
+            CieloHttpClient::POST,
+            'https://httpbin.org/post',
+            $body,
+            ['Authorization' => 'Basic dXNlcjpwYXNz'],
+            CieloHttpClient::CONTENT_TYPE_JSON,
+        );
+
+        $this->assertSame(200, $response->getStatusCode());
+        $this->assertTrue($handler->hasDebug('Request'));
+        $this->assertTrue($handler->hasDebug('Response'));
+
+        $requestContext = $this->getLogContext($handler, 'Request');
+        $this->assertStringContainsString('POST https://httpbin.org/post', $requestContext[0]);
+
+        $requestHeaders = implode("\n", $requestContext[1]);
+        $this->assertStringContainsString('Authorization: Basic ******', $requestHeaders);
+
+        $requestBody = $requestContext[2];
+        $this->assertStringContainsString('123456******3456', $requestBody);
+        $this->assertStringNotContainsString('1234567890123456', $requestBody);
+        $this->assertStringContainsString('"securityCode":"***"', $requestBody);
+        $this->assertStringContainsString('"access_token":"***"', $requestBody);
+
+        $responseContext = $this->getLogContext($handler, 'Response');
+        $this->assertStringContainsString('Status code: 200', $responseContext[0]);
+        $this->assertStringContainsString('123456******3456', $responseContext[1]);
+    }
+
+    /**
+     * @return array<int, mixed>
+     */
+    private function getLogContext(TestHandler $handler, string $message): array
+    {
+        foreach ($handler->getRecords() as $record) {
+            if ($record['message'] === $message) {
+                return $record['context'];
+            }
+        }
+
+        $this->fail(sprintf('Log message "%s" not found.', $message));
     }
 }
