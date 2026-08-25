@@ -92,9 +92,9 @@ if ((int) $sale->getPayment()->getStatus() === TransactionStatus::AUTHORIZED) {
 
 ## Utilizando o SDK
 
-Para criar um pagamento simples com cartão de crédito com o SDK, basta fazer:
+Os exemplos abaixo assumem que o SDK já foi configurado conforme a seção [Configurando o SDK](#configurando-o-sdk). O comentário `// ...` indica a continuação desse setup.
 
-### Criando um pagamento com cartão de crédito
+### Configurando o SDK
 
 ```php
 <?php
@@ -103,92 +103,64 @@ require 'vendor/autoload.php';
 use Cielo\API30\Merchant;
 
 use Cielo\API30\Ecommerce\Environment;
-use Cielo\API30\Ecommerce\Sale;
 use Cielo\API30\Ecommerce\CieloEcommerce;
-use Cielo\API30\Ecommerce\Payment;
-use Cielo\API30\Ecommerce\CreditCard;
 
-use Cielo\API30\Ecommerce\Request\CieloRequestException;
-// ...
 // Configure o ambiente
-$environment = $environment = Environment::sandbox();
+$environment = Environment::sandbox();
 
 // Configure seu merchant
 $merchant = new Merchant('MERCHANT ID', 'MERCHANT KEY');
 
-// Crie uma instância de Sale informando o ID do pedido na loja
+// Crie uma instância de CieloEcommerce informando o merchant e o ambiente
+$cieloEcommerce = new CieloEcommerce($merchant, $environment);
+```
+
+### Criando um pagamento com cartão de crédito
+
+```php
+use Cielo\API30\Ecommerce\Sale;
+use Cielo\API30\Ecommerce\Payment;
+use Cielo\API30\Ecommerce\CreditCard;
+use Cielo\API30\Ecommerce\Request\CieloRequestException;
+
+// ...
+
 $sale = new Sale('123');
+$sale->customer('Fulano de Tal');
 
-// Crie uma instância de Customer informando o nome do cliente
-$customer = $sale->customer('Fulano de Tal');
-
-// Crie uma instância de Payment informando o valor do pagamento
 $payment = $sale->payment(15700);
-
-// Crie uma instância de Credit Card utilizando os dados de teste
-// esses dados estão disponíveis no manual de integração
 $payment->setType(Payment::PAYMENTTYPE_CREDITCARD)
         ->creditCard("123", CreditCard::VISA)
         ->setExpirationDate("12/2018")
         ->setCardNumber("0000000000000001")
         ->setHolder("Fulano de Tal");
 
-// Crie o pagamento na Cielo
 try {
-    // Configure o SDK com seu merchant e o ambiente apropriado para criar a venda
-    $sale = (new CieloEcommerce($merchant, $environment))->createSale($sale);
+    $sale = $cieloEcommerce->createSale($sale);
 
-    // Com a venda criada na Cielo, já temos o ID do pagamento, TID e demais
-    // dados retornados pela Cielo
     $paymentId = $sale->getPayment()->getPaymentId();
 
-    // Com o ID do pagamento, podemos fazer sua captura, se ela não tiver sido capturada ainda
-    $sale = (new CieloEcommerce($merchant, $environment))->captureSale($paymentId, 15700, 0);
-
-    // E também podemos fazer seu cancelamento, se for o caso
-    $sale = (new CieloEcommerce($merchant, $environment))->cancelSale($paymentId, 15700);
+    $sale = $cieloEcommerce->captureSale($paymentId, 15700, 0);
+    $sale = $cieloEcommerce->cancelSale($paymentId, 15700);
 } catch (CieloRequestException $e) {
-    // Em caso de erros de integração, podemos tratar o erro aqui.
-    // os códigos de erro estão todos disponíveis no manual de integração.
     $error = $e->getCieloError();
 }
-// ...
 ```
 
 ### Criando um pagamento e gerando o token do cartão de crédito
 
 ```php
-<?php
-require 'vendor/autoload.php';
-
-use Cielo\API30\Merchant;
-
-use Cielo\API30\Ecommerce\Environment;
 use Cielo\API30\Ecommerce\Sale;
-use Cielo\API30\Ecommerce\CieloEcommerce;
 use Cielo\API30\Ecommerce\Payment;
 use Cielo\API30\Ecommerce\CreditCard;
-
 use Cielo\API30\Ecommerce\Request\CieloRequestException;
+
 // ...
-// Configure o ambiente
-$environment = $environment = Environment::sandbox();
 
-// Configure seu merchant
-$merchant = new Merchant('MERCHANT ID', 'MERCHANT KEY');
-
-// Crie uma instância de Sale informando o ID do pedido na loja
 $sale = new Sale('123');
+$sale->customer('Fulano de Tal');
 
-// Crie uma instância de Customer informando o nome do cliente
-$customer = $sale->customer('Fulano de Tal');
-
-// Crie uma instância de Payment informando o valor do pagamento
 $payment = $sale->payment(15700);
-
-// Crie uma instância de Credit Card utilizando os dados de teste
-// esses dados estão disponíveis no manual de integração.
-// Utilize setSaveCard(true) para obter o token do cartão
 $payment->setType(Payment::PAYMENTTYPE_CREDITCARD)
         ->creditCard("123", CreditCard::VISA)
         ->setExpirationDate("12/2018")
@@ -196,255 +168,142 @@ $payment->setType(Payment::PAYMENTTYPE_CREDITCARD)
         ->setHolder("Fulano de Tal")
         ->setSaveCard(true);
 
-// Crie o pagamento na Cielo
 try {
-    // Configure o SDK com seu merchant e o ambiente apropriado para criar a venda
-    $sale = (new CieloEcommerce($merchant, $environment))->createSale($sale);
+    $sale = $cieloEcommerce->createSale($sale);
 
-    // O token gerado pode ser armazenado em banco de dados para vendar futuras
     $token = $sale->getPayment()->getCreditCard()->getCardToken();
 } catch (CieloRequestException $e) {
-    // Em caso de erros de integração, podemos tratar o erro aqui.
-    // os códigos de erro estão todos disponíveis no manual de integração.
     $error = $e->getCieloError();
 }
-// ...
 ```
 
 ### Criando um pagamento com cartão de crédito tokenizado
 
 ```php
-<?php
-require 'vendor/autoload.php';
-
-use Cielo\API30\Merchant;
-
-use Cielo\API30\Ecommerce\Environment;
 use Cielo\API30\Ecommerce\Sale;
-use Cielo\API30\Ecommerce\CieloEcommerce;
 use Cielo\API30\Ecommerce\Payment;
 use Cielo\API30\Ecommerce\CreditCard;
-
 use Cielo\API30\Ecommerce\Request\CieloRequestException;
+
 // ...
-// Configure o ambiente
-$environment = $environment = Environment::sandbox();
 
-// Configure seu merchant
-$merchant = new Merchant('MERCHANT ID', 'MERCHANT KEY');
-
-// Crie uma instância de Sale informando o ID do pedido na loja
 $sale = new Sale('123');
+$sale->customer('Fulano de Tal');
 
-// Crie uma instância de Customer informando o nome do cliente
-$customer = $sale->customer('Fulano de Tal');
-
-// Crie uma instância de Payment informando o valor do pagamento
 $payment = $sale->payment(15700);
-
-// Crie uma instância de Credit Card utilizando os dados de teste
-// esses dados estão disponíveis no manual de integração
 $payment->setType(Payment::PAYMENTTYPE_CREDITCARD)
         ->creditCard("123", CreditCard::VISA)
         ->setCardToken("TOKEN-PREVIAMENTE-ARMAZENADO");
 
-// Crie o pagamento na Cielo
 try {
-    // Configure o SDK com seu merchant e o ambiente apropriado para criar a venda
-    $sale = (new CieloEcommerce($merchant, $environment))->createSale($sale);
+    $sale = $cieloEcommerce->createSale($sale);
 
-    // Com a venda criada na Cielo, já temos o ID do pagamento, TID e demais
-    // dados retornados pela Cielo
     $paymentId = $sale->getPayment()->getPaymentId();
 } catch (CieloRequestException $e) {
-    // Em caso de erros de integração, podemos tratar o erro aqui.
-    // os códigos de erro estão todos disponíveis no manual de integração.
     $error = $e->getCieloError();
 }
-// ...
 ```
 
 ### Criando um pagamento recorrente
 
 ```php
-<?php
-require 'vendor/autoload.php';
-
-use Cielo\API30\Merchant;
-
-use Cielo\API30\Ecommerce\Environment;
 use Cielo\API30\Ecommerce\Sale;
-use Cielo\API30\Ecommerce\CieloEcommerce;
 use Cielo\API30\Ecommerce\Payment;
 use Cielo\API30\Ecommerce\CreditCard;
-
+use Cielo\API30\Ecommerce\RecurrentPayment;
 use Cielo\API30\Ecommerce\Request\CieloRequestException;
-// ...
-// ...
-// Configure o ambiente
-$environment = $environment = Environment::sandbox();
 
-// Configure seu merchant
-$merchant = new Merchant('MID', 'MKEY');
+// ...
 
-// Crie uma instância de Sale informando o ID do pedido na loja
 $sale = new Sale('123');
+$sale->customer('Fulano de Tal');
 
-// Crie uma instância de Customer informando o nome do cliente
-$customer = $sale->customer('Fulano de Tal');
-
-// Crie uma instância de Payment informando o valor do pagamento
 $payment = $sale->payment(15700);
-
-// Crie uma instância de Credit Card utilizando os dados de teste
-// esses dados estão disponíveis no manual de integração
 $payment->setType(Payment::PAYMENTTYPE_CREDITCARD)
         ->creditCard("123", CreditCard::VISA)
         ->setExpirationDate("12/2018")
         ->setCardNumber("0000000000000001")
         ->setHolder("Fulano de Tal");
 
-// Configure o pagamento recorrente
 $payment->recurrentPayment(true)->setInterval(RecurrentPayment::INTERVAL_MONTHLY);
 
-// Crie o pagamento na Cielo
 try {
-    // Configure o SDK com seu merchant e o ambiente apropriado para criar a venda
-    $sale = (new CieloEcommerce($merchant, $environment))->createSale($sale);
+    $sale = $cieloEcommerce->createSale($sale);
 
     $recurrentPaymentId = $sale->getPayment()->getRecurrentPayment()->getRecurrentPaymentId();
 } catch (CieloRequestException $e) {
-    // Em caso de erros de integração, podemos tratar o erro aqui.
-    // os códigos de erro estão todos disponíveis no manual de integração.
     $error = $e->getCieloError();
 }
-// ...
 ```
 
 ### Criando transações com cartão de débito
 
 ```php
-<?php
-require 'vendor/autoload.php';
-
-use Cielo\API30\Merchant;
-
-use Cielo\API30\Ecommerce\Environment;
 use Cielo\API30\Ecommerce\Sale;
-use Cielo\API30\Ecommerce\CieloEcommerce;
 use Cielo\API30\Ecommerce\CreditCard;
-
 use Cielo\API30\Ecommerce\Request\CieloRequestException;
 
 // ...
-// Configure o ambiente
-$environment = $environment = Environment::sandbox();
 
-// Configure seu merchant
-$merchant = new Merchant('MERCHANT ID', 'MERCHANT KEY');
-
-// Crie uma instância de Sale informando o ID do pedido na loja
 $sale = new Sale('123');
+$sale->customer('Fulano de Tal');
 
-// Crie uma instância de Customer informando o nome do cliente
-$customer = $sale->customer('Fulano de Tal');
-
-// Crie uma instância de Payment informando o valor do pagamento
 $payment = $sale->payment(15700);
-
-// Defina a URL de retorno para que o cliente possa voltar para a loja
-// após a autenticação do cartão
 $payment->setReturnUrl('https://localhost/test');
-
-// Crie uma instância de Debit Card utilizando os dados de teste
-// esses dados estão disponíveis no manual de integração
 $payment->debitCard("123", CreditCard::VISA)
         ->setExpirationDate("12/2018")
         ->setCardNumber("0000000000000001")
         ->setHolder("Fulano de Tal");
 
-// Crie o pagamento na Cielo
 try {
-    // Configure o SDK com seu merchant e o ambiente apropriado para criar a venda
-    $sale = (new CieloEcommerce($merchant, $environment))->createSale($sale);
+    $sale = $cieloEcommerce->createSale($sale);
 
-    // Com a venda criada na Cielo, já temos o ID do pagamento, TID e demais
-    // dados retornados pela Cielo
     $paymentId = $sale->getPayment()->getPaymentId();
-
-    // Utilize a URL de autenticação para redirecionar o cliente ao ambiente
-    // de autenticação do emissor do cartão
     $authenticationUrl = $sale->getPayment()->getAuthenticationUrl();
 } catch (CieloRequestException $e) {
-    // Em caso de erros de integração, podemos tratar o erro aqui.
-    // os códigos de erro estão todos disponíveis no manual de integração.
     $error = $e->getCieloError();
 }
-// ...
 ```
 
 ### Criando uma venda com Boleto
 
 ```php
-<?php
-require 'vendor/autoload.php';
-
-use Cielo\API30\Merchant;
-
-use Cielo\API30\Ecommerce\Environment;
 use Cielo\API30\Ecommerce\Sale;
-use Cielo\API30\Ecommerce\CieloEcommerce;
 use Cielo\API30\Ecommerce\Payment;
-
 use Cielo\API30\Ecommerce\Request\CieloRequestException;
+
 // ...
-// Configure o ambiente
-$environment = $environment = Environment::sandbox();
 
-// Configure seu merchant
-$merchant = new Merchant('MERCHANT ID', 'MERCHANT KEY');
-
-// Crie uma instância de Sale informando o ID do pedido na loja
 $sale = new Sale('123');
+$sale->customer('Fulano de Tal')
+     ->setIdentity('00000000001')
+     ->setIdentityType('CPF')
+     ->address()->setZipCode('22750012')
+                ->setCountry('BRA')
+                ->setState('RJ')
+                ->setCity('Rio de Janeiro')
+                ->setDistrict('Centro')
+                ->setStreet('Av Marechal Camara')
+                ->setNumber('123');
 
-// Crie uma instância de Customer informando o nome do cliente,
-// documento e seu endereço
-$customer = $sale->customer('Fulano de Tal')
-                  ->setIdentity('00000000001')
-                  ->setIdentityType('CPF')
-                  ->address()->setZipCode('22750012')
-                             ->setCountry('BRA')
-                             ->setState('RJ')
-                             ->setCity('Rio de Janeiro')
-                             ->setDistrict('Centro')
-                             ->setStreet('Av Marechal Camara')
-                             ->setNumber('123');
+$sale->payment(15700)
+     ->setType(Payment::PAYMENTTYPE_BOLETO)
+     ->setAddress('Rua de Teste')
+     ->setBoletoNumber('1234')
+     ->setAssignor('Empresa de Teste')
+     ->setDemonstrative('Desmonstrative Teste')
+     ->setExpirationDate(date('d/m/Y', strtotime('+1 month')))
+     ->setIdentification('11884926754')
+     ->setInstructions('Esse é um boleto de exemplo');
 
-// Crie uma instância de Payment informando o valor do pagamento
-$payment = $sale->payment(15700)
-                ->setType(Payment::PAYMENTTYPE_BOLETO)
-                ->setAddress('Rua de Teste')
-                ->setBoletoNumber('1234')
-                ->setAssignor('Empresa de Teste')
-                ->setDemonstrative('Desmonstrative Teste')
-                ->setExpirationDate(date('d/m/Y', strtotime('+1 month')))
-                ->setIdentification('11884926754')
-                ->setInstructions('Esse é um boleto de exemplo');
-
-// Crie o pagamento na Cielo
 try {
-    // Configure o SDK com seu merchant e o ambiente apropriado para criar a venda
-    $sale = (new CieloEcommerce($merchant, $environment))->createSale($sale);
+    $sale = $cieloEcommerce->createSale($sale);
 
-    // Com a venda criada na Cielo, já temos o ID do pagamento, TID e demais
-    // dados retornados pela Cielo
     $paymentId = $sale->getPayment()->getPaymentId();
     $boletoURL = $sale->getPayment()->getUrl();
 
     printf("URL Boleto: %s\n", $boletoURL);
 } catch (CieloRequestException $e) {
-    // Em caso de erros de integração, podemos tratar o erro aqui.
-    // os códigos de erro estão todos disponíveis no manual de integração.
     $error = $e->getCieloError();
 }
 ```
@@ -452,44 +311,28 @@ try {
 ### Criando uma venda com PIX
 
 ```php
-<?php
-// ...
-$sale = new Sale('123');
+use Cielo\API30\Ecommerce\Sale;
 
-$customer = $sale->customer('Fulano de Tal');
+// ...
+
+$sale = new Sale('123');
+$sale->customer('Fulano de Tal');
 
 $payment = $sale->payment(15700);
 $payment->pix();
 $payment->setCapture(true);
 
-$sale = (new CieloEcommerce($merchant, $environment))->createSale($sale);
-// ...
+$sale = $cieloEcommerce->createSale($sale);
 ```
 
 ### Tokenizando um cartão
 
 ```php
-<?php
-
-require 'vendor/autoload.php';
-
-use Cielo\API30\Merchant;
-
-use Cielo\API30\Ecommerce\Environment;
 use Cielo\API30\Ecommerce\CreditCard;
-use Cielo\API30\Ecommerce\CieloEcommerce;
-
 use Cielo\API30\Ecommerce\Request\CieloRequestException;
 
 // ...
-// ...
-// Configure o ambiente
-$environment = Environment::sandbox();
 
-// Configure seu merchant
-$merchant = new Merchant('MID', 'MKEY');
-
-// Crie uma instância do objeto que irá retornar o token do cartão 
 $card = new CreditCard();
 $card->setCustomerName('Fulano de Tal');
 $card->setCardNumber('0000000000000001');
@@ -498,17 +341,12 @@ $card->setExpirationDate('10/2020');
 $card->setBrand(CreditCard::VISA);
 
 try {
-    // Configure o SDK com seu merchant e o ambiente apropriado para recuperar o cartão
-    $card = (new CieloEcommerce($merchant, $environment))->tokenizeCard($card);
+    $card = $cieloEcommerce->tokenizeCard($card);
 
-    // Get the token
     $cardToken = $card->getCardToken();
 } catch (CieloRequestException $e) {
-    // Em caso de erros de integração, podemos tratar o erro aqui.
-    // os códigos de erro estão todos disponíveis no manual de integração.
     $error = $e->getCieloError();
 }
-// ...
 ```
 
 ### Pagamento com autenticação 3DS (ExternalAuthentication)
@@ -516,8 +354,14 @@ try {
 Após a autenticação 3DS no front-end, envie os dados retornados no pagamento:
 
 ```php
+use Cielo\API30\Ecommerce\Sale;
 use Cielo\API30\Ecommerce\ExternalAuthentication;
+use Cielo\API30\Ecommerce\Payment;
+use Cielo\API30\Ecommerce\CreditCard;
 
+// ...
+
+$sale = new Sale('123');
 $payment = $sale->payment(15700);
 $payment->setType(Payment::PAYMENTTYPE_CREDITCARD)
     ->setAuthenticate(true)
@@ -537,7 +381,7 @@ $external = (new ExternalAuthentication())
     ->setVersion('2.2.0');
 $payment->setExternalAuthentication($external);
 
-$sale = (new CieloEcommerce($merchant, $environment))->createSale($sale);
+$sale = $cieloEcommerce->createSale($sale);
 ```
 
 Para o fluxo Data Only (3DS 2.2), informe `dataOnly: true`:
@@ -552,7 +396,9 @@ $payment->externalAuthentication(cavv: '4', eci: '5', dataOnly: true, version: '
 Gere o token de acesso no back-end e repasse ao script 3DS no front-end:
 
 ```php
-$token = (new CieloEcommerce($merchant, $environment))->create3DSAccessToken(
+// ...
+
+$token = $cieloEcommerce->create3DSAccessToken(
     clientId: 'SEU_CLIENT_ID_3DS',
     clientSecret: 'SEU_CLIENT_SECRET_3DS',
     establishmentCode: 1006993068,
@@ -568,14 +414,14 @@ $accessToken = $token->getAccessToken();
 Qualquer endpoint da API pode ser utilizado através dos métodos `apiQueryRequest()` e `apiRequest()` do `RequestService`.
 
 ```php
-$cielo = new CieloEcommerce($merchant, $environment);
+// ...
 
 // Consulta BIN do cartão
-$response = $cielo->requestService()->apiQueryRequest('1/cardBin/539861');
+$response = $cieloEcommerce->requestService()->apiQueryRequest('1/cardBin/539861');
 $cardBin = $response->json();
 
 // Zero Auth
-$response = $cielo->requestService()->apiRequest(
+$response = $cieloEcommerce->requestService()->apiRequest(
     method: 'POST',
     endpoint: '1/zeroauth',
     body: [
@@ -587,6 +433,39 @@ $response = $cielo->requestService()->apiRequest(
     ],
 );
 $zeroAuth = $response->json();
+```
+
+### Autenticação 3DS - novo MPI Cielo (V3)
+
+> [!NOTE]
+> O novo MPI Cielo (V3) é exclusivo para clientes com certificação PCI.
+
+```php
+// ...
+
+$threeDSecureService = $cieloEcommerce->getThreeDSecureService()
+    ->setClientId($clientId)
+    ->setClientSecret($clientSecret)
+    ->setEstablishmentCode($establishmentCode)
+    ->setMerchantName($merchantName)
+    ->setMcc($mcc);
+
+// AUTH: obter o access_token para o back-end
+$token = $threeDSecureService->generateAccessTokenMpiV3();
+
+// INIT: inicializar a sessão o token retornado deve ser enviado ao front-end para inicializar o script MPI.
+$response = $cieloEcommerce->requestService()->mpiApiRequest(
+    method: 'POST',
+    endpoint: '/v3/3ds/init',
+    headers: [
+        'Authorization' => "Bearer {$token->getAccessToken()}"
+    ],
+    body: [
+        "orderNumber" => "ORD-0000123",
+        "currency" => "986",
+        "amount" => "1000"
+    ]
+);
 ```
 
 ## Manual

@@ -168,6 +168,11 @@ class CieloEcommerce
         return $tokenizeCardRequest->execute($card);
     }
 
+    public function getThreeDSecureService(): ThreeDSecureService
+    {
+        return new ThreeDSecureService($this->merchant, $this->environment, $this->logger);
+    }
+
     /**
      * Cria o token de acesso 3DS (Cielo OAuth / Braspag MPI) para uso no script de autenticação do front-end.
      *
@@ -180,7 +185,7 @@ class CieloEcommerce
         string $merchantName,
         int $mcc,
     ): AccessToken {
-        $threeDSecureService = new ThreeDSecureService($this->merchant, $this->environment, $this->logger);
+        $threeDSecureService = $this->getThreeDSecureService();
 
         $threeDSecureService->setClientId($clientId)
             ->setClientSecret($clientSecret)

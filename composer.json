@@ -30,6 +30,7 @@
   },
   "homepage": "https://github.com/DeveloperCielo/API-3.0-PHP",
   "scripts": {
+    "start": "php -S localhost:8879 -t .",
     "phpstan": "phpstan analyse -c phpstan.neon",
     "phpunit": "phpunit --configuration phpunit.xml --testdox --exclude-group payment",
     "test": [
