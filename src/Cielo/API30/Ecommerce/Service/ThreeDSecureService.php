@@ -55,6 +55,33 @@ class ThreeDSecureService extends AbstractService
         return $this->populateAccessToken($response);
     }
 
+    /**
+     * @see https://docs.cielo.com.br/ecommerce-cielo/docs/mpi-v3#etapa-3--init-inicializar-a-sess%C3%A3o
+     */
+    public function generateAccessTokenMpiV3(): AccessToken
+    {
+        $url = $this->environment->getMpiUrl() . 'v3/auth/token';
+
+        $authorization = 'Basic ' . base64_encode($this->clientId . ':' . $this->clientSecret);
+
+        $payload = [
+            'EstablishmentCode' => $this->establishmentCode,
+            'MerchantName' => $this->merchantName,
+            'MCC' => $this->mcc,
+        ];
+
+        $response = $this->getHttpClient()->request(
+            CieloHttpClient::POST,
+            $url,
+            $payload,
+            [
+                'Authorization' => $authorization,
+            ]
+        );
+
+        return $this->populateAccessToken($response);
+    }
+
     /** @throws CieloRequestException */
     private function populateAccessToken(CieloHttpResponse $response): AccessToken
     {
