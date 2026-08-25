@@ -40,7 +40,7 @@ class RequestService extends AbstractService
             method: $method,
             url: $this->buildUrl($this->environment->getMpiUrl(), $endpoint),
             body: $body,
-            headers: \array_merge($this->getApiAuthHeaders(), $headers),
+            headers: $headers,
         );
     }
 
