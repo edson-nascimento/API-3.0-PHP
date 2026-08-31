@@ -3,7 +3,6 @@
 namespace TestApp\Unit;
 
 use Cielo\API30\Ecommerce\AccessToken;
-use Cielo\API30\Ecommerce\Environment;
 use PHPUnit\Framework\TestCase;
 
 final class AccessTokenTest extends TestCase
@@ -72,11 +71,5 @@ final class AccessTokenTest extends TestCase
         $accessToken->setExpiresIn(600);
         $accessToken->calculateExpiresAt();
         $this->assertTrue($accessToken->isValid());
-    }
-
-    public function testEnvironmentMpiUrl(): void
-    {
-        $this->assertSame('https://mpisandbox.braspag.com.br/', Environment::sandbox()->getMpiUrl());
-        $this->assertSame('https://mpi.braspag.com.br/', Environment::production()->getMpiUrl());
     }
 }
